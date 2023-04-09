@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -101,9 +103,10 @@ class _LessonPageState extends State<LessonPage> {
                     builder: (context, snapshot) {
                       final positonData = snapshot.data;
                       return Padding(
-                        padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
+                        padding: const EdgeInsets.all(6.0),
                         child: ProgressBar(
                           barHeight: 4,
+
                           //baseBarColor: Colors.greenAccent,
                           //thumbColor: Colors.red,
                           progress: positonData?.position ?? Duration.zero,
@@ -138,52 +141,70 @@ class _LessonPageState extends State<LessonPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ListView.builder(
-                  itemCount: widget.audioFiles.length,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  physics: const ClampingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () async {},
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            height: 70,
-                            color: Colors.white,
-                            child: Row(
-                              children: <Widget>[
-                                Container(
-                                  color: Colors.blue,
-                                  width: 50,
-                                  height: 50,
-                                  child: const Icon(Icons.play_arrow,
-                                      color: Colors.white),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                StreamBuilder<SequenceState?>(
+                    stream: _player.sequenceStateStream,
+                    builder: (context, snapshot) {
+                      final state = snapshot.data;
+
+                      if (state?.sequence.isEmpty ?? true) {
+                        return const SizedBox();
+                      }
+                      final currentIndex = snapshot.data!.currentIndex;
+                      return ListView.builder(
+                        itemCount: widget.audioFiles.length,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        physics: const ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () async {
+                              _player.seek(Duration.zero, index: index);
+                              _player.play();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 20.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  height: 70,
+                                  color: Colors.white,
+                                  child: Row(
                                     children: <Widget>[
-                                      Text(widget.audioFiles[index].title),
+                                      Container(
+                                        color: index == currentIndex
+                                            ? Colors.red
+                                            : Colors.blue,
+                                        width: 50,
+                                        height: 50,
+                                        child: const Icon(Icons.play_arrow,
+                                            color: Colors.white),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              widget.audioFiles[index].title,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Icon(Icons.audio_file,
+                                          color: Colors.grey),
                                     ],
                                   ),
                                 ),
-                                const Icon(Icons.audio_file,
-                                    color: Colors.grey),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          );
+                        },
+                      );
+                    }),
                 const SizedBox(
                   height: 200,
                 ),

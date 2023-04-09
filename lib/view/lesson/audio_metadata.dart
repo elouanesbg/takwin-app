@@ -11,6 +11,7 @@ class AudioMetadata extends StatelessWidget {
       children: [
         Text(
           title,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Colors.white,
             fontSize: 14,
