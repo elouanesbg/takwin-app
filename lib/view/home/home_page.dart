@@ -1,241 +1,88 @@
-import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:takwin/model/main_category_model.dart';
-import 'package:takwin/service/data_service.dart';
-import 'package:takwin/view/filter/main_category_filter.dart';
-import 'package:takwin/view/home/categorie_tile.dart';
+import 'package:takwin/view/home/lesson_view_tile.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final List<MainCategory> takwinData;
+  const HomePage({super.key, required this.takwinData});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late List<MainCategory> takwinData = [];
-  var _currentIndex = 0;
-  int selectedCategory = 0;
-  bool isLoadingData = true;
-  getData() async {
-    var data = await DataService().readJson();
-    setState(() {
-      takwinData = data;
-      isLoadingData = false;
-    });
-  }
-
-  /*Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }*/
-
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
+  final _random = Random();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: const Text(
-          "تكوين الراسخين",
-          style: TextStyle(
-              //fontSize: 25.0,
-              //fontWeight: FontWeight.w600,
-              //color: Colors.white,
-              ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return MainCategoryFilter(mainCategorys: takwinData);
-                  });
-            },
-            icon: const Icon(
-              Icons.filter_alt_outlined,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-
-      //_appBar(AppBar().preferredSize.height),
-      //drawer: _appDrawer(),
-      bottomNavigationBar: _bottomNavigationBar(),
-      body: isLoadingData
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: takwinData[selectedCategory].categorys.length,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              physics: const ClampingScrollPhysics(),
-              itemBuilder: (context, index) {
-                return CategorieTile(
-                    category: takwinData[selectedCategory].categorys[index]);
-              }),
-    );
-  }
-
-  _bottomNavigationBar() => SalomonBottomBar(
-        backgroundColor: const Color(0xFF343A40),
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-        items: [
-          /// Home
-          SalomonBottomBarItem(
-              icon: const Icon(Icons.home),
-              title: const Text("الرئيسية"),
-              selectedColor: Colors.blue,
-              unselectedColor: Colors.white),
-
-          /// Likes
-          SalomonBottomBarItem(
-            icon: const Icon(Icons.favorite_border),
-            title: const Text("المفضلة"),
-            selectedColor: Colors.blue,
-            unselectedColor: Colors.white,
-          ),
-
-          /// Search
-          SalomonBottomBarItem(
-            icon: const Icon(Icons.explore),
-            title: const Text("تصفح"),
-            selectedColor: Colors.orange,
-            unselectedColor: Colors.white,
-          ),
-
-          /// Profile
-          SalomonBottomBarItem(
-              icon: const Icon(Icons.settings),
-              title: const Text("الإعدادات"),
-              selectedColor: Colors.teal,
-              unselectedColor: Colors.white),
-        ],
-      );
-
-  _appBar(height) => PreferredSize(
-        preferredSize: Size(MediaQuery.of(context).size.width,
-            height + (Platform.isWindows ? 120 : 80)),
-        child: Stack(
-          children: <Widget>[
-            Container(
-              color: Theme.of(context).primaryColor,
-              height: height + 85,
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                child: StreamBuilder<Object>(
-                    stream: null,
-                    builder: (context, snapshot) {
-                      return const Center(
-                        child: Text(
-                          "تكوين الراسخين",
-                          style: TextStyle(
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    }),
-              ),
-            ),
-            Container(),
-            Positioned(
-              top: 120.0,
-              left: 0.0,
-              right: 0.0,
-              child: AppBar(
-                backgroundColor: Theme.of(context).primaryColor,
-                primary: false,
-                title: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  height: 40,
-                  child: ListView.builder(
-                      itemCount: takwinData.length,
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      physics: const ClampingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return mainCategoryTile(
-                            text: takwinData[index].title,
-                            isSelected:
-                                index == selectedCategory ? true : false,
-                            index: index);
-                      }),
-                ),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return MainCategoryFilter(
-                                mainCategorys: takwinData);
-                          });
-                    },
-                    icon: const Icon(
-                      Icons.filter_alt_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      );
-
-  mainCategoryTile(
-      {required text, required bool isSelected, required int index}) {
-    return GestureDetector(
-        onTap: () {
-          setState(() {
-            selectedCategory = index;
-          });
-        },
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(right: 12),
-              child: Text(
-                text,
-                style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    fontSize: isSelected ? 18 : 16),
-              ),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(
+              height: 16,
+            ),
+            Image.asset(
+              "assets/img/main_img.jpg",
+              fit: BoxFit.fitWidth,
             ),
             const SizedBox(
-              height: 6,
+              height: 30,
             ),
-            isSelected
-                ? Container(
-                    height: 4,
-                    width: text.length.toDouble() * 5,
-                    decoration: BoxDecoration(
-                        color: const Color(0xff007084),
-                        borderRadius: BorderRadius.circular(12)),
-                  )
-                : Container()
+            const SizedBox(
+              height: 16,
+            ),
+            const Text(
+              "متفرقات",
+              style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            SizedBox(
+              height: 180,
+              child: ListView.builder(
+                  itemCount: 10,
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final randomMainCategoryIndex =
+                        _random.nextInt(widget.takwinData.length);
+                    final randomMainCategory =
+                        widget.takwinData[randomMainCategoryIndex];
+
+                    final randomCategoryIndex =
+                        _random.nextInt(randomMainCategory.categorys.length);
+                    final randomCategory =
+                        randomMainCategory.categorys[randomCategoryIndex];
+
+                    final randomSubCategoryIndex =
+                        _random.nextInt(randomCategory.subcategorys.length);
+                    final randomSubCategory =
+                        randomCategory.subcategorys[randomSubCategoryIndex];
+
+                    final randomLessonIndex =
+                        _random.nextInt(randomSubCategory.lessons.length);
+                    final randomLesson =
+                        randomSubCategory.lessons[randomLessonIndex];
+
+                    return LessonViewTile(
+                      lesson: randomLesson,
+                      subcategoryTitle: randomSubCategory.title,
+                    );
+                  }),
+            ),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

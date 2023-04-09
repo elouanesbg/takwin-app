@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:takwin/view/home/home_page.dart';
+import 'package:takwin/app.dart';
 
 void main() async {
   await JustAudioBackground.init(
@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
           primaryColor: const Color(0xFF343A40),
           fontFamily: "Almarai",
           textTheme: const TextTheme()),
-      home: const Directionality(
-          textDirection: TextDirection.rtl, child: HomePage()),
+      home:
+          const Directionality(textDirection: TextDirection.rtl, child: App()),
     );
   }
 }

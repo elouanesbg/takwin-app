@@ -45,7 +45,7 @@ class LessonHomePage extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                subcategory.lessons.length == 0
+                subcategory.lessons.isEmpty
                     ? Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 20.0),

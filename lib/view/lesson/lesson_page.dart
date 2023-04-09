@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -125,13 +123,23 @@ class _LessonPageState extends State<LessonPage> {
         ),
         appBar: AppBar(
           leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(
-                Icons.cancel,
-                color: Colors.red,
-              )),
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.cancel,
+              color: Colors.white,
+            ),
+          ),
           automaticallyImplyLeading: false,
           title: Text(widget.title),
+          actions: [
+            IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(
+                Icons.favorite,
+                color: Colors.red,
+              ),
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           child: Padding(
