@@ -1,0 +1,24 @@
+[
+    {
+        "title": "category_title",
+        "subcategorys": [
+            {
+                "title": "subcategory_title",
+                "description": "subcategory_description",
+                "lessons": [
+                    {
+                        "title": "lesson_title",
+                        "url": "lesson_url",
+                        "audioFiles": [
+                            {
+                                "name": "audio_name",
+                                "title": "audio_title",
+                                "length": "audio_length"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
