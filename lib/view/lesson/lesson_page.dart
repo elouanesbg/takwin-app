@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:takwin/model/audio_files_model.dart';
+import 'package:takwin/model/lesson_model.dart';
+import 'package:takwin/provider/user_provide.dart';
 import 'package:takwin/view/lesson/audio_controler.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:takwin/view/lesson/audio_metadata.dart';
 
 class LessonPage extends StatefulWidget {
-  final String title;
-  final String url;
-  final List<AudioFiles> audioFiles;
-  const LessonPage(
-      {super.key,
-      required this.audioFiles,
-      required this.title,
-      required this.url});
+  final Lesson lesson;
+  const LessonPage({super.key, required this.lesson});
 
   @override
   State<LessonPage> createState() => _LessonPageState();
@@ -24,18 +20,19 @@ class LessonPage extends StatefulWidget {
 class _LessonPageState extends State<LessonPage> {
   late AudioPlayer _player;
   late ConcatenatingAudioSource _playList;
-  late String audioUrl = '${widget.url}/${widget.audioFiles[0].name}';
+  late String audioUrl =
+      '${widget.lesson.url}/${widget.lesson.audioFiles[0].name}';
 
   List<AudioSource> getPlayList() {
     List<AudioSource> list = [];
     int i = 0;
-    for (var element in widget.audioFiles) {
-      Uri url = Uri.parse("${widget.url}/${element.name}");
+    for (var element in widget.lesson.audioFiles) {
+      Uri url = Uri.parse("${widget.lesson.url}/${element.name}");
       list.add(AudioSource.uri(url,
           tag: MediaItem(
             id: "$i",
             title: element.title,
-            artist: widget.title,
+            artist: widget.lesson.title,
           )));
       i++;
     }
@@ -130,13 +127,22 @@ class _LessonPageState extends State<LessonPage> {
             ),
           ),
           automaticallyImplyLeading: false,
-          title: Text(widget.title),
+          title: Text(widget.lesson.title),
           actions: [
             IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(
+              onPressed: () {
+                if (Provider.of<UserData>(context, listen: false)
+                    .isFvLesson(widget.lesson.url)) {
+                  context.read<UserData>().deleteContact(widget.lesson.key);
+                } else {
+                  context.read<UserData>().addLesson(widget.lesson);
+                }
+              },
+              icon: Icon(
                 Icons.favorite,
-                color: Colors.red,
+                color: context.watch<UserData>().isFvLesson(widget.lesson.url)
+                    ? Colors.red
+                    : Colors.white,
               ),
             ),
           ],
@@ -159,7 +165,7 @@ class _LessonPageState extends State<LessonPage> {
                       }
                       final currentIndex = snapshot.data!.currentIndex;
                       return ListView.builder(
-                        itemCount: widget.audioFiles.length,
+                        itemCount: widget.lesson.audioFiles.length,
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
                         physics: const ClampingScrollPhysics(),
@@ -197,7 +203,8 @@ class _LessonPageState extends State<LessonPage> {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              widget.audioFiles[index].title,
+                                              widget.lesson.audioFiles[index]
+                                                  .title,
                                             ),
                                           ],
                                         ),

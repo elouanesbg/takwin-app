@@ -19,9 +19,8 @@ class FavoritePage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => LessonPage(
-                    audioFiles: subcategory.lessons[index].audioFiles,
-                    title: subcategory.lessons[index].title,
-                    url: subcategory.lessons[index].url),
+                  lesson: subcategory.lessons[index],
+                ),
               ),
             );
           },

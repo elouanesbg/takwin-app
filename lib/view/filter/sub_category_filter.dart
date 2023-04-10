@@ -42,13 +42,6 @@ class SubCategoryFilter extends StatelessWidget {
                               LessonHomePage(subcategory: subcategorys[index]),
                         ),
                       );
-
-                      /*showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return MainCategoryFilter(
-                                mainCategorys: mainCategorys);
-                          }).then((value) => Navigator.pop(context));*/
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(

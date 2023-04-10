@@ -3,6 +3,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:takwin/model/main_category_model.dart';
 import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/about/about_page.dart';
+import 'package:takwin/view/favorite/favorite_page.dart';
 import 'package:takwin/view/filter/main_category_filter.dart';
 import 'package:takwin/view/home/home_page.dart';
 
@@ -21,6 +22,13 @@ class _AppState extends State<App> {
 
   getData() async {
     var data = await DataService().readJson();
+    for (var element in data) {
+      for (var element in element.categorys) {
+        for (var element in element.subcategorys) {
+          element.lessons.removeWhere((element) => element.audioFiles.isEmpty);
+        }
+      }
+    }
     for (var element in data) {
       for (var element in element.categorys) {
         element.subcategorys.removeWhere((element) => element.lessons.isEmpty);
@@ -69,11 +77,14 @@ class _AppState extends State<App> {
         ),
         bottomNavigationBar: _bottomNavigationBar(),
         body: isLoadingData
-            ? const CircularProgressIndicator()
+            ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
                   if (_currentIndex == 0) HomePage(takwinData: takwinData),
-                  if (_currentIndex == 1) AboutPage(),
+                  if (_currentIndex == 1)
+                    FavoritePage(
+                        subcategory:
+                            takwinData[0].categorys[0].subcategorys[0]),
                   if (_currentIndex == 2) AboutPage(),
                   if (_currentIndex == 3) AboutPage(),
                 ],

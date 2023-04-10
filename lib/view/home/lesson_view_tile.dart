@@ -14,9 +14,8 @@ class LessonViewTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => LessonPage(
-              audioFiles: lesson.audioFiles,
-              title: subcategoryTitle,
-              url: lesson.url),
+            lesson: lesson,
+          ),
         ),
       ),
       child: Center(

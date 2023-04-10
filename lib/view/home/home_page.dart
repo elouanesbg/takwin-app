@@ -1,7 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:takwin/model/lesson_model.dart';
 import 'package:takwin/model/main_category_model.dart';
+import 'package:takwin/provider/user_provide.dart';
 import 'package:takwin/view/home/lesson_view_tile.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,31 +20,30 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
+    return Expanded(
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(
-              height: 16,
+              height: 10,
             ),
             Image.asset(
               "assets/img/main_img.jpg",
               fit: BoxFit.fitWidth,
             ),
             const SizedBox(
-              height: 30,
+              height: 40,
             ),
-            const SizedBox(
-              height: 16,
-            ),
-            const Text(
-              "متفرقات",
-              style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "متفرقات",
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500),
+              ),
             ),
             const SizedBox(
               height: 12,
@@ -79,6 +81,44 @@ class _HomePageState extends State<HomePage> {
                       subcategoryTitle: randomSubCategory.title,
                     );
                   }),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "السجل",
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500),
+              ),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            SizedBox(
+              height: 180,
+              child: ListView.builder(
+                  itemCount: Provider.of<UserData>(context).favLessonCount,
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Consumer<UserData>(
+                      builder: (context, value, child) {
+                        Lesson currentLesson = value.getLesson(index);
+                        return LessonViewTile(
+                          lesson: currentLesson,
+                          subcategoryTitle: "randomSubCategory.title",
+                        );
+                      },
+                    );
+                  }),
+            ),
+            const SizedBox(
+              height: 40,
             ),
           ],
         ),
