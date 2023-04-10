@@ -38,6 +38,29 @@ class _HomePageState extends State<HomePage> {
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
+                "تصفح الدروس",
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.filter_alt,
+                size: 38,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
                 "متفرقات",
                 style: TextStyle(
                     color: Colors.black87,

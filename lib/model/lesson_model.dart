@@ -19,4 +19,10 @@ class Lesson extends HiveObject {
         url: data["url"],
         audioFiles: audioFiles.map((e) => AudioFiles.fromJson(e)).toList());
   }
+
+  Map toJson() => {
+        "title": title,
+        "url": url,
+        "audioFiles": audioFiles.map((e) => e.toJson()).toList()
+      };
 }

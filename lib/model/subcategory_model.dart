@@ -15,4 +15,9 @@ class Subcategory {
         description: data["description"] ?? "",
         lessons: lessons.map((e) => Lesson.fromJson(e)).toList());
   }
+  Map toJson() => {
+        "title": title,
+        "description": description,
+        "lessons": lessons.map((e) => e.toJson()).toList()
+      };
 }

@@ -13,4 +13,8 @@ class Category {
         subcategorys:
             subcategorys.map((e) => Subcategory.fromJson(e)).toList());
   }
+  Map toJson() => {
+        "title": title,
+        "subcategorys": subcategorys.map((e) => e.toJson()).toList()
+      };
 }

@@ -16,4 +16,6 @@ class AudioFiles extends HiveObject {
     return AudioFiles(
         name: data["name"], title: data["title"], length: data["length"]);
   }
+
+  Map toJson() => {"name": name, "title": title, "length": length};
 }

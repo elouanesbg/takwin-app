@@ -12,4 +12,7 @@ class MainCategory {
         title: data["title"],
         categorys: categorys.map((e) => Category.fromJson(e)).toList());
   }
+
+  Map toJson() =>
+      {"title": title, "categorys": categorys.map((e) => e.toJson()).toList()};
 }
