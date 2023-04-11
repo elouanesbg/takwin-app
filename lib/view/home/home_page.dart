@@ -65,7 +65,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                      left: 5,
                       right: 5,
                       top: 20,
                       bottom: 10,
@@ -142,64 +141,59 @@ class AudioViewTile extends StatelessWidget {
           ),
         ),
       ),
-      child: Container(
-        margin: const EdgeInsets.only(left: 10),
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(
-                bottom: 10,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(
+              bottom: 10,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(
+                15.0,
               ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                  15.0,
-                ),
-                color: Colors.white.withOpacity(
-                  0.1,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          randomLesson["subcategoryTitle"],
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        Text(
-                          randomLesson["lesson"].title,
-                          style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                      ],
-                    ),
-                    const Icon(
-                      Icons.play_circle,
-                      color: Color(0xFF2C5F2D),
-                      size: 40,
-                    ),
-                  ],
-                ),
+              color: Colors.white.withOpacity(
+                0.1,
               ),
             ),
-          ],
-        ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        randomLesson["subcategoryTitle"],
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      Text(
+                        randomLesson["lesson"].title,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
+                  ),
+                  const Icon(
+                    Icons.play_circle,
+                    color: Color(0xFF2C5F2D),
+                    size: 40,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

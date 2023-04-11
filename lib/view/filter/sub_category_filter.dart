@@ -41,13 +41,15 @@ class SubCategoryFilter extends StatelessWidget {
                   physics: const ClampingScrollPhysics(),
                   itemBuilder: (context, index) {
                     return InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => LessonHomePage(
-                                subcategory: subcategorys[index]),
-                          ),
-                        );
+                      onTap: () async {
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (_) => LessonHomePage(
+                                    subcategory: subcategorys[index]),
+                              ),
+                            )
+                            .then((value) => Navigator.pop(context));
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

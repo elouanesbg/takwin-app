@@ -39,8 +39,8 @@ class MainCategoryFilter extends StatelessWidget {
                   physics: const ClampingScrollPhysics(),
                   itemBuilder: (context, index) {
                     return InkWell(
-                      onTap: () {
-                        showDialog(
+                      onTap: () async {
+                        await showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return CategoryFilter(

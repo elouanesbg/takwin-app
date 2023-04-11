@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -73,7 +75,26 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
 
   Future<void> _init() async {
     await _player.setLoopMode(LoopMode.all);
-    await _player.setAudioSource(_playList);
+    try {
+      await _player.setAudioSource(_playList);
+    } on PlayerException catch (e) {
+      // iOS/macOS: maps to NSError.code
+      // Android: maps to ExoPlayerException.type
+      // Web: maps to MediaError.code
+      log("Error code: ${e.code}");
+      // iOS/macOS: maps to NSError.localizedDescription
+      // Android: maps to ExoPlaybackException.getMessage()
+      // Web: a generic message
+      log("Error message: ${e.message}");
+    } on PlayerInterruptedException catch (e) {
+      // This call was interrupted since another audio source was loaded or the
+      // player was stopped or disposed before this audio source could complete
+      // loading.
+      log("Connection aborted: ${e.message}");
+    } catch (e) {
+      // Fallback for all errors
+      log("$e");
+    }
   }
 
   @override
@@ -124,65 +145,74 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
                           scrollDirection: Axis.vertical,
                           physics: const ClampingScrollPhysics(),
                           itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () async {
-                                _player.seek(Duration.zero, index: index);
-                                _player.play();
-                              },
-                              child: Column(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                      bottom: 10,
+                            return Column(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    bottom: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      15.0,
                                     ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        15.0,
-                                      ),
-                                      color: Colors.white.withOpacity(
-                                        0.3,
-                                      ),
+                                    color: Colors.white.withOpacity(
+                                      0.3,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Flexible(
-                                            child: Text(
-                                              //overflow: TextOverflow.ellipsis,
-                                              widget.lesson.audioFiles[index]
-                                                  .title,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .copyWith(
-                                                    fontSize: 14,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(
+                                            Icons.download,
+                                            color: Color(0xFF2C5F2D),
+                                            size: 32,
                                           ),
-                                          Icon(
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            //overflow: TextOverflow.ellipsis,
+                                            widget
+                                                .lesson.audioFiles[index].title,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(
+                                                  fontSize: 14,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            _player.seek(Duration.zero,
+                                                index: index);
+                                            _player.play();
+                                          },
+                                          icon: Icon(
                                             Icons.play_circle,
                                             color: index == currentIndex
                                                 ? const Color(0xFF2C5F2D)
                                                 : const Color(0xFF234E70),
                                             size: 40,
                                           ),
-                                        ],
-                                      ),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  //old
-                                ],
-                              ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                //old
+                              ],
                             );
                           },
                         );
@@ -203,7 +233,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
     return AppBar(
       backgroundColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => Navigator.pop(context, false),
         icon: const Icon(
           Icons.cancel,
           color: Colors.white,
