@@ -25,11 +25,28 @@ dependencies:
   build_runner: ^2.3.3
   hive_generator: ^2.0.0
   internet_connection_checker: ^1.0.0+1
+  just_audio_windows: ^0.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.12.0
+  flutter_native_splash: ^2.2.19
   flutter_lints: ^2.0.0
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/img/app-icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  windows:
+    generate: true
+    image_path: "assets/img/app-icon-48.png"
+    icon_size: 48 # min:48, max:256, default: 48
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/img/app-icon.png
+  android: true
+  ios: true 
 flutter:
   uses-material-design: true
   assets:
