@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   late ConcatenatingAudioSource _playList;
   late String audioUrl =
       '${widget.lesson.url}/${widget.lesson.audioFiles[0].name}';
+  bool hasConnection = false;
 
   List<AudioSource> getPlayList() {
     List<AudioSource> list = [];
@@ -74,6 +76,8 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   }
 
   Future<void> _init() async {
+    hasConnection = await InternetConnectionChecker().hasConnection;
+
     await _player.setLoopMode(LoopMode.all);
     try {
       await _player.setAudioSource(_playList);
@@ -192,9 +196,32 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
                                         ),
                                         IconButton(
                                           onPressed: () {
-                                            _player.seek(Duration.zero,
-                                                index: index);
-                                            _player.play();
+                                            if (hasConnection) {
+                                              _player.seek(Duration.zero,
+                                                  index: index);
+                                              _player.play();
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                duration: const Duration(
+                                                  seconds: 2,
+                                                ),
+                                                backgroundColor:
+                                                    Colors.redAccent,
+                                                content: Center(
+                                                  child: Text(
+                                                    "الرجاء التحقق من اتصالك بالانترنت",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium!
+                                                        .copyWith(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                  ),
+                                                ),
+                                              ));
+                                            }
                                           },
                                           icon: Icon(
                                             Icons.play_circle,
@@ -203,7 +230,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
                                                 : const Color(0xFF234E70),
                                             size: 40,
                                           ),
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
