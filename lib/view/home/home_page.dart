@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:takwin/model/main_category_model.dart';
 import 'package:takwin/view/filter/main_category_filter.dart';
 import 'package:takwin/view/home/lesson_view_tile.dart';
+import 'package:takwin/view/lesson/lesson_page.dart';
 
 class HomePage extends StatefulWidget {
   final List<MainCategory> takwinData;
@@ -128,65 +129,77 @@ class AudioViewTile extends StatelessWidget {
     required this.randomLesson,
   });
 
+  // ignore: prefer_typing_uninitialized_variables
   final randomLesson;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 10),
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(
-              bottom: 10,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                15.0,
-              ),
-              color: Colors.white.withOpacity(
-                0.3,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        randomLesson["subcategoryTitle"],
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      Text(
-                        randomLesson["lesson"].title,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              fontSize: 14,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
-                  const Icon(
-                    Icons.play_circle,
-                    color: Colors.deepPurple,
-                    size: 40,
-                  ),
-                ],
-              ),
-            ),
+    return InkWell(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => LessonPage(
+            lesson: randomLesson["lesson"],
           ),
-        ],
+        ),
+      ),
+      child: Container(
+        margin: const EdgeInsets.only(left: 10),
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(
+                bottom: 10,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  15.0,
+                ),
+                color: Colors.white.withOpacity(
+                  0.3,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          randomLesson["subcategoryTitle"],
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        Text(
+                          randomLesson["lesson"].title,
+                          style:
+                              Theme.of(context).textTheme.bodySmall!.copyWith(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ],
+                    ),
+                    const Icon(
+                      Icons.play_circle,
+                      color: Colors.deepPurple,
+                      size: 40,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -253,44 +266,68 @@ class _TopWidget extends StatelessWidget {
             "استمع لمختلف الدروس ",
             style: Theme.of(context)
                 .textTheme
-                .headline6!
+                .titleLarge!
                 .copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(
             height: 10,
           ),
-          TextFormField(
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              hintText: "بحث",
-              hintStyle: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .copyWith(color: Colors.grey.shade400),
-              prefixIcon: IconButton(
-                icon: const Icon(
-                  Icons.filter_alt_sharp,
+          InkWell(
+            onTap: () => showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return MainCategoryFilter(
+                    mainCategorys: widget.takwinData,
+                  );
+                }),
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      15.0,
+                    ),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      right: 20,
+                      left: 20,
+                      top: 8,
+                      bottom: 8,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            //overflow: TextOverflow.ellipsis,
+                            "اضغط هنا لتصفح الدروس",
+                            style:
+                                Theme.of(context).textTheme.bodySmall!.copyWith(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade400,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.search,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return MainCategoryFilter(
-                          mainCategorys: widget.takwinData,
-                        );
-                      });
-                },
-              ),
-              suffixIcon: const Icon(
-                Icons.search,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  15.0,
+                const SizedBox(
+                  height: 10,
                 ),
-                borderSide: BorderSide.none,
-              ),
+                //old
+              ],
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,7 @@ class LessonPage extends StatefulWidget {
   State<LessonPage> createState() => _LessonPageState();
 }
 
-class _LessonPageState extends State<LessonPage> {
+class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   late AudioPlayer _player;
   late ConcatenatingAudioSource _playList;
   late String audioUrl =
@@ -50,8 +51,24 @@ class _LessonPageState extends State<LessonPage> {
   void initState() {
     super.initState();
     _player = AudioPlayer();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+    ));
     _playList = ConcatenatingAudioSource(children: getPlayList());
     _init();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Release the player's resources when not in use. We use "stop" so that
+      // if the app resumes later, it will still remember what position to
+      // resume from.
+      _player.stop();
+    }
+    if (state == AppLifecycleState.detached) {
+      _player.stop();
+    }
   }
 
   Future<void> _init() async {

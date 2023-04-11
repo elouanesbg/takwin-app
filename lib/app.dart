@@ -17,7 +17,7 @@ class _AppState extends State<App> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late List<MainCategory> takwinData = [];
   bool isLoadingData = true;
-  var _currentIndex = 3;
+  var _currentIndex = 0;
 
   getData() async {
     var data = await DataService().readJson();

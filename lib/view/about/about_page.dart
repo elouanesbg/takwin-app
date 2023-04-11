@@ -4,7 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 class AboutPage extends StatelessWidget {
   AboutPage({super.key});
   final Uri takwinUrl = Uri(scheme: 'https', host: 'takw.in', path: 'about');
-  final Uri githubUrl = Uri(scheme: 'https', host: 'takw.in', path: 'about');
+  final Uri githubUrl =
+      Uri(scheme: 'https', host: 'github.com', path: 'elouanesbg/takwin-app');
 
   Future<void> _launchInBrowser(Uri url) async {
     if (!await launchUrl(
