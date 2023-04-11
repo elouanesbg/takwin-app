@@ -13,13 +13,13 @@ class SubCategoryFilter extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.deepPurple.shade800,
-              Colors.deepPurple.shade200,
+              Color(0xFF234E70),
+              Color(0xFF2C5F2D),
             ],
           ),
         ),
@@ -56,11 +56,14 @@ class SubCategoryFilter extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
                             height: 70,
-                            color: Colors.deepPurple.withOpacity(0.3),
+                            color: Colors.white.withOpacity(
+                              0.3,
+                            ),
                             child: Row(
                               children: <Widget>[
                                 Container(
-                                  color: Colors.deepPurple.withOpacity(0.5),
+                                  color:
+                                      const Color(0xFF234E70).withOpacity(0.5),
                                   width: 70,
                                   height: 70,
                                   child: const Icon(Icons.category,

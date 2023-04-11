@@ -156,7 +156,7 @@ class AudioViewTile extends StatelessWidget {
                   15.0,
                 ),
                 color: Colors.white.withOpacity(
-                  0.3,
+                  0.1,
                 ),
               ),
               child: Padding(
@@ -191,7 +191,7 @@ class AudioViewTile extends StatelessWidget {
                     ),
                     const Icon(
                       Icons.play_circle,
-                      color: Colors.deepPurple,
+                      color: Color(0xFF2C5F2D),
                       size: 40,
                     ),
                   ],

@@ -45,7 +45,7 @@ class LessonViewTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                   15.0,
                 ),
-                color: Colors.deepPurple.shade600.withOpacity(0.5),
+                color: const Color(0xFF234E70).withOpacity(0.3),
               ),
             ),
             Container(
@@ -81,7 +81,7 @@ class LessonViewTile extends StatelessWidget {
                     ),
                     const Icon(
                       Icons.play_circle,
-                      color: Colors.deepPurple,
+                      color: Color(0xFF2C5F2D),
                       size: 40,
                     ),
                   ],

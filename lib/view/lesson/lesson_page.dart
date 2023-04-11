@@ -87,13 +87,13 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.deepPurple.shade800,
-              Colors.deepPurple.shade200,
+              Color(0xFF234E70),
+              Color(0xFF2C5F2D),
             ],
           ),
         ),
@@ -169,8 +169,8 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
                                           Icon(
                                             Icons.play_circle,
                                             color: index == currentIndex
-                                                ? Colors.red
-                                                : Colors.deepPurple,
+                                                ? const Color(0xFF2C5F2D)
+                                                : const Color(0xFF234E70),
                                             size: 40,
                                           ),
                                         ],

@@ -11,13 +11,13 @@ class LessonHomePage extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.deepPurple.shade800,
-              Colors.deepPurple.shade200,
+              Color(0xFF234E70),
+              Color(0xFF2C5F2D),
             ],
           ),
         ),

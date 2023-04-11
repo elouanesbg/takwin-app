@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xFF343A40),
           ),
-          primaryColor: Colors.deepPurple.shade900.withOpacity(0.9),
+          primaryColor: const Color(0xFF234E70),
           fontFamily: "Almarai",
           textTheme: Theme.of(context).textTheme.apply(
                 bodyColor: Colors.white,

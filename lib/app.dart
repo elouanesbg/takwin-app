@@ -51,13 +51,14 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.deepPurple.shade800.withOpacity(0.8),
-            Colors.deepPurple.shade200,
+            Color(0xFF234E70),
+            Color(0xFF2C5F2D),
+            Color(0xFF97BC62),
           ],
         ),
       ),
@@ -93,8 +94,8 @@ class _AppState extends State<App> {
         onTap: _onItemTapped,
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.deepPurple.shade800,
-        unselectedItemColor: Colors.deepPurple.shade400,
+        backgroundColor: const Color(0xEE234E70),
+        unselectedItemColor: Colors.grey,
         selectedItemColor: Colors.white,
         showUnselectedLabels: false,
         showSelectedLabels: false,
