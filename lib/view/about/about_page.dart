@@ -4,6 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 class AboutPage extends StatelessWidget {
   AboutPage({super.key});
   final Uri takwinUrl = Uri(scheme: 'https', host: 'takw.in', path: 'about');
+  final Uri githubUrl = Uri(scheme: 'https', host: 'takw.in', path: 'about');
+
   Future<void> _launchInBrowser(Uri url) async {
     if (!await launchUrl(
       url,
@@ -18,20 +20,18 @@ class AboutPage extends StatelessWidget {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 8, 14, 40),
-        child: Center(
+        child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             // ignore: prefer_const_literals_to_create_immutables
             children: [
-              const SelectableText(
-                "تم انشاء هذا التطبيق انطلاقا من عمل ",
-                style: TextStyle(fontSize: 18, height: 2),
-                textAlign: TextAlign.justify,
-                textDirection: TextDirection.rtl,
-              ),
-              const SelectableText(
-                "Abdelkhalek Beraoud",
-                style: TextStyle(
-                    fontSize: 18, height: 2, fontWeight: FontWeight.bold),
+              SelectableText(
+                "تم انشاء هذا التطبيق انطلاقا من المعلومات التي تم جمعها من موقع تكوين الراسخين ",
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      height: 1.5,
+                    ),
                 textAlign: TextAlign.justify,
                 textDirection: TextDirection.rtl,
               ),
@@ -41,19 +41,72 @@ class AboutPage extends StatelessWidget {
                   onTap: () async {
                     _launchInBrowser(takwinUrl);
                   },
-                  child: Image.asset(
-                    "assets/img/github.png",
+                  child: Center(
+                    child: Image.asset(
+                      "assets/img/takwin.png",
+                      height: 50,
+                      width: 50,
+                    ),
                   ),
                 ),
               ),
-              const SelectableText(
-                "و الذي قام بجمع أكثر من 5800 من مشاهير الإسلام مع سيرة ذاتية من كتاب سير أعلام النبلاء باللغة العربية وذلك انطلاقا من موقع islamweb",
-                style: TextStyle(
-                  fontSize: 18,
-                  height: 2,
-                ),
-                textAlign: TextAlign.justify,
+              SelectableText(
+                "و الذي يهدف الى:",
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      height: 1.5,
+                    ),
+                textAlign: TextAlign.start,
                 textDirection: TextDirection.rtl,
+              ),
+              SelectableText(
+                "- رسم منهج للعلوم الشرعية التأصيلية.",
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18,
+                      height: 1.5,
+                    ),
+                textAlign: TextAlign.start,
+                textDirection: TextDirection.rtl,
+              ),
+              SelectableText(
+                "- جمع مادة المنهج، من متون ومنظومات وشروح وحواشٍ مكتوبة، وكذلك شروح صوتية ومرئية. (تنبيه: اجتهدنا في اختيار المادة الصوتية والمرئية التي وضعناها، وما زلنا نحرر وننقح).",
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18,
+                      height: 1.5,
+                    ),
+                textAlign: TextAlign.start,
+                textDirection: TextDirection.rtl,
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              SelectableText(
+                "هذا التطبيق مجاني و مفتوح المصدر ويمكن الاطلاع على الكود الخاص به على الرابط أدناه",
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18,
+                      height: 1.5,
+                    ),
+                textAlign: TextAlign.start,
+                textDirection: TextDirection.rtl,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: GestureDetector(
+                  onTap: () async {
+                    _launchInBrowser(githubUrl);
+                  },
+                  child: Center(
+                    child: Image.asset(
+                      "assets/img/github.png",
+                      height: 50,
+                      width: 50,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

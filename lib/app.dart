@@ -17,7 +17,7 @@ class _AppState extends State<App> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late List<MainCategory> takwinData = [];
   bool isLoadingData = true;
-  var _currentIndex = 0;
+  var _currentIndex = 3;
 
   getData() async {
     var data = await DataService().readJson();
@@ -65,7 +65,7 @@ class _AppState extends State<App> {
           backgroundColor: Colors.transparent,
           key: _scaffoldKey,
           appBar: const MainAppBar(),
-          bottomNavigationBar: const MainBottomNavigationBar(),
+          bottomNavigationBar: _mainBottomNavigationBar(),
           body: isLoadingData
               ? const Center(child: CircularProgressIndicator())
               : Column(
@@ -81,19 +81,20 @@ class _AppState extends State<App> {
                 )),
     );
   }
-}
 
-class MainBottomNavigationBar extends StatelessWidget {
-  const MainBottomNavigationBar({
-    super.key,
-  });
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  _mainBottomNavigationBar() {
     return BottomNavigationBar(
+        onTap: _onItemTapped,
+        currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.deepPurple.shade800,
-        unselectedItemColor: Colors.white,
+        unselectedItemColor: Colors.deepPurple.shade400,
         selectedItemColor: Colors.white,
         showUnselectedLabels: false,
         showSelectedLabels: false,
