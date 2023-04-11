@@ -12,73 +12,95 @@ class SubCategoryFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(
-                Icons.cancel,
-                color: Colors.red,
-              )),
-          automaticallyImplyLeading: false,
-          title: Text(title),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.deepPurple.shade800,
+              Colors.deepPurple.shade200,
+            ],
+          ),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(
-              8,
-            ),
-            child: ListView.builder(
-                itemCount: subcategorys.length,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              LessonHomePage(subcategory: subcategorys[index]),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 20.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
-                          height: 70,
-                          color: Colors.white,
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                color: Colors.grey,
-                                width: 70,
-                                height: 70,
-                                child: const Icon(Icons.category,
-                                    color: Colors.white),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(subcategorys[index].title),
-                                  ],
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            title: Text(title),
+          ),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(
+                8,
+              ),
+              child: ListView.builder(
+                  itemCount: subcategorys.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => LessonHomePage(
+                                subcategory: subcategorys[index]),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            height: 70,
+                            color: Colors.deepPurple.withOpacity(0.3),
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  color: Colors.deepPurple.withOpacity(0.5),
+                                  width: 70,
+                                  height: 70,
+                                  child: const Icon(Icons.category,
+                                      color: Colors.white),
                                 ),
-                              ),
-                              const Icon(Icons.arrow_forward_ios,
-                                  color: Colors.blue),
-                            ],
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        subcategorys[index].title,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+            ),
           ),
         ),
       ),

@@ -69,159 +69,192 @@ class _LessonPageState extends State<LessonPage> {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        bottomSheet: SizedBox(
-          height: 120,
-          child: ColoredBox(
-            color: Theme.of(context).primaryColor,
-            child: Center(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.deepPurple.shade800,
+              Colors.deepPurple.shade200,
+            ],
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          bottomSheet: _audioPlayerWidget(),
+          appBar: _appbar(context),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(
+                8,
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  AudioControl(audioPlayer: _player),
                   StreamBuilder<SequenceState?>(
-                    stream: _player.sequenceStateStream,
-                    builder: (context, snapshot) {
-                      final state = snapshot.data;
+                      stream: _player.sequenceStateStream,
+                      builder: (context, snapshot) {
+                        final state = snapshot.data;
 
-                      if (state?.sequence.isEmpty ?? true) {
-                        return const SizedBox();
-                      }
-                      final metadta = state!.currentSource!.tag as MediaItem;
-                      return AudioMetadata(
-                        title: metadta.title,
-                        artist: metadta.artist ?? '',
-                      );
-                    },
-                  ),
-                  StreamBuilder<PositionData>(
-                    stream: _positionDataStream,
-                    builder: (context, snapshot) {
-                      final positonData = snapshot.data;
-                      return Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: ProgressBar(
-                          barHeight: 4,
-
-                          //baseBarColor: Colors.greenAccent,
-                          //thumbColor: Colors.red,
-                          progress: positonData?.position ?? Duration.zero,
-                          buffered:
-                              positonData?.bufferdPosition ?? Duration.zero,
-                          total: positonData?.duration ?? Duration.zero,
-                          onSeek: _player.seek,
-                        ),
-                      );
-                    },
+                        if (state?.sequence.isEmpty ?? true) {
+                          return const SizedBox();
+                        }
+                        final currentIndex = snapshot.data!.currentIndex;
+                        return ListView.builder(
+                          itemCount: widget.lesson.audioFiles.length,
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          physics: const ClampingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () async {
+                                _player.seek(Duration.zero, index: index);
+                                _player.play();
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                      bottom: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                        15.0,
+                                      ),
+                                      color: Colors.white.withOpacity(
+                                        0.3,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              //overflow: TextOverflow.ellipsis,
+                                              widget.lesson.audioFiles[index]
+                                                  .title,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(
+                                                    fontSize: 14,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.play_circle,
+                                            color: index == currentIndex
+                                                ? Colors.red
+                                                : Colors.deepPurple,
+                                            size: 40,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  //old
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }),
+                  const SizedBox(
+                    height: 200,
                   ),
                 ],
               ),
             ),
           ),
         ),
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(
-              Icons.cancel,
-              color: Colors.white,
-            ),
-          ),
-          automaticallyImplyLeading: false,
-          title: Text(widget.lesson.title),
-          actions: [
-            IconButton(
-              onPressed: () {
-                if (Provider.of<UserData>(context, listen: false)
-                    .isFvLesson(widget.lesson.url)) {
-                  context.read<UserData>().deleteContact(widget.lesson.key);
-                } else {
-                  context.read<UserData>().addLesson(widget.lesson);
-                }
-              },
-              icon: Icon(
-                Icons.favorite,
-                color: context.watch<UserData>().isFvLesson(widget.lesson.url)
-                    ? Colors.red
-                    : Colors.white,
-              ),
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(
-              8,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                StreamBuilder<SequenceState?>(
-                    stream: _player.sequenceStateStream,
-                    builder: (context, snapshot) {
-                      final state = snapshot.data;
+      ),
+    );
+  }
 
-                      if (state?.sequence.isEmpty ?? true) {
-                        return const SizedBox();
-                      }
-                      final currentIndex = snapshot.data!.currentIndex;
-                      return ListView.builder(
-                        itemCount: widget.lesson.audioFiles.length,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        physics: const ClampingScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () async {
-                              _player.seek(Duration.zero, index: index);
-                              _player.play();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 20.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Container(
-                                  height: 70,
-                                  color: Colors.white,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        color: index == currentIndex
-                                            ? Colors.red
-                                            : Colors.blue,
-                                        width: 50,
-                                        height: 50,
-                                        child: const Icon(Icons.play_arrow,
-                                            color: Colors.white),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              widget.lesson.audioFiles[index]
-                                                  .title,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const Icon(Icons.audio_file,
-                                          color: Colors.grey),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }),
-                const SizedBox(
-                  height: 200,
+  AppBar _appbar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: const Icon(
+          Icons.cancel,
+          color: Colors.white,
+        ),
+      ),
+      automaticallyImplyLeading: false,
+      title: Text(widget.lesson.title),
+      actions: [
+        IconButton(
+          onPressed: () {
+            if (Provider.of<UserData>(context, listen: false)
+                .isFvLesson(widget.lesson.url)) {
+              context.read<UserData>().deleteContact(widget.lesson.key);
+            } else {
+              context.read<UserData>().addLesson(widget.lesson);
+            }
+          },
+          icon: Icon(
+            Icons.favorite,
+            color: context.watch<UserData>().isFvLesson(widget.lesson.url)
+                ? Colors.red
+                : Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  _audioPlayerWidget() {
+    return SizedBox(
+      height: 130,
+      child: ColoredBox(
+        color: Theme.of(context).primaryColor,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                AudioControl(audioPlayer: _player),
+                StreamBuilder<SequenceState?>(
+                  stream: _player.sequenceStateStream,
+                  builder: (context, snapshot) {
+                    final state = snapshot.data;
+
+                    if (state?.sequence.isEmpty ?? true) {
+                      return const SizedBox();
+                    }
+                    final metadta = state!.currentSource!.tag as MediaItem;
+                    return AudioMetadata(
+                      title: metadta.title,
+                      artist: metadta.artist ?? '',
+                    );
+                  },
+                ),
+                StreamBuilder<PositionData>(
+                  stream: _positionDataStream,
+                  builder: (context, snapshot) {
+                    final positonData = snapshot.data;
+                    return Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: ProgressBar(
+                        barHeight: 4,
+                        progress: positonData?.position ?? Duration.zero,
+                        buffered: positonData?.bufferdPosition ?? Duration.zero,
+                        total: positonData?.duration ?? Duration.zero,
+                        onSeek: _player.seek,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

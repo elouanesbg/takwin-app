@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:takwin/main_app_bar.dart';
 import 'package:takwin/model/main_category_model.dart';
 import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/about/about_page.dart';
 import 'package:takwin/view/favorite/favorite_page.dart';
-import 'package:takwin/view/filter/main_category_filter.dart';
 import 'package:takwin/view/home/home_page.dart';
 
 class App extends StatefulWidget {
@@ -51,73 +50,70 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: const Text(
-            "تكوين الراسخين",
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return MainCategoryFilter(
-                        mainCategorys: takwinData,
-                      );
-                    });
-              },
-              icon: const Icon(
-                Icons.filter_alt_outlined,
-                color: Colors.white,
-              ),
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.deepPurple.shade800.withOpacity(0.8),
+            Colors.deepPurple.shade200,
           ],
         ),
-        bottomNavigationBar: _bottomNavigationBar(),
-        body: isLoadingData
-            ? const Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  if (_currentIndex == 0) HomePage(takwinData: takwinData),
-                  if (_currentIndex == 1)
-                    FavoritePage(
-                        subcategory:
-                            takwinData[0].categorys[0].subcategorys[0]),
-                  if (_currentIndex == 2) AboutPage(),
-                  if (_currentIndex == 3) AboutPage(),
-                ],
-              ));
+      ),
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          key: _scaffoldKey,
+          appBar: const MainAppBar(),
+          bottomNavigationBar: const MainBottomNavigationBar(),
+          body: isLoadingData
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    if (_currentIndex == 0) HomePage(takwinData: takwinData),
+                    if (_currentIndex == 1)
+                      FavoritePage(
+                          subcategory:
+                              takwinData[0].categorys[0].subcategorys[0]),
+                    if (_currentIndex == 2) AboutPage(),
+                    if (_currentIndex == 3) AboutPage(),
+                  ],
+                )),
+    );
   }
+}
 
-  _bottomNavigationBar() => SalomonBottomBar(
-        backgroundColor: const Color(0xFF343A40),
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-        items: [
-          SalomonBottomBarItem(
-              icon: const Icon(Icons.home),
-              title: const Text("الرئيسية"),
-              selectedColor: Colors.blue,
-              unselectedColor: Colors.white),
-          SalomonBottomBarItem(
-            icon: const Icon(Icons.favorite_border),
-            title: const Text("المفضلة"),
-            selectedColor: Colors.blue,
-            unselectedColor: Colors.white,
+class MainBottomNavigationBar extends StatelessWidget {
+  const MainBottomNavigationBar({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.deepPurple.shade800,
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Colors.white,
+        showUnselectedLabels: false,
+        showSelectedLabels: false,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "الرئيسية",
           ),
-          SalomonBottomBarItem(
-              icon: const Icon(Icons.settings),
-              title: const Text("الإعدادات"),
-              selectedColor: Colors.teal,
-              unselectedColor: Colors.white),
-          SalomonBottomBarItem(
-            icon: const Icon(Icons.help),
-            title: const Text("حول"),
-            selectedColor: Colors.orange,
-            unselectedColor: Colors.white,
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite_border),
+            label: "المفضلة",
           ),
-        ],
-      );
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "الإعدادات",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.help),
+            label: "حول",
+          ),
+        ]);
+  }
 }
