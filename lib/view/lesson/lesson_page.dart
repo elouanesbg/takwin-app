@@ -22,6 +22,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:takwin/view/lesson/audio_metadata.dart';
 import 'package:takwin/view/lesson/lesson_page_tile.dart';
 import 'package:uuid/uuid.dart';
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 
 class LessonPage extends StatefulWidget {
@@ -75,9 +76,6 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
     _port.listen((dynamic data) {
-      String id = data[0];
-      DownloadTaskStatus status = data[1];
-      int progress = data[2];
       setState(() {});
     });
 
@@ -210,13 +208,13 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
                           itemBuilder: (context, index) {
                             String url =
                                 "${widget.lesson.url}/${widget.lesson.audioFiles[index].name}";
-                            Map? _map = downloadsListMaps.firstWhereOrNull(
+                            Map? map = downloadsListMaps.firstWhereOrNull(
                                 (element) => element["url"] == url);
                             return LessonPageTile(
                               audioFile: widget.lesson.audioFiles[index],
-                              status: _map == null
+                              status: map == null
                                   ? DownloadTaskStatus.undefined
-                                  : _map!["status"],
+                                  : map["status"],
                               isPlay: index == currentIndex,
                               player: _player,
                               playIndex: index,

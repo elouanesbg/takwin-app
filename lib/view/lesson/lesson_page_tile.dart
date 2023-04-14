@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -10,13 +11,13 @@ import 'package:takwin/model/audio_files_model.dart';
 import 'package:uuid/uuid.dart';
 
 class LessonPageTile extends StatefulWidget {
-  DownloadTaskStatus status;
-  bool isPlay;
-  AudioFiles audioFile;
-  AudioPlayer player;
-  int playIndex;
-  String audioUrl;
-  LessonPageTile(
+  final DownloadTaskStatus status;
+  final bool isPlay;
+  final AudioFiles audioFile;
+  final AudioPlayer player;
+  final int playIndex;
+  final String audioUrl;
+  const LessonPageTile(
       {super.key,
       required this.audioFile,
       required this.status,
@@ -55,33 +56,33 @@ class _LessonPageTileState extends State<LessonPageTile> {
     }
   }
 
-  Icon downloadStatus(DownloadTaskStatus _status) {
-    return _status == DownloadTaskStatus.undefined
+  Icon downloadStatus(DownloadTaskStatus status) {
+    return status == DownloadTaskStatus.undefined
         ? const Icon(
             Icons.download,
             color: Colors.white,
           )
-        : _status == DownloadTaskStatus.canceled
+        : status == DownloadTaskStatus.canceled
             ? const Icon(
                 Icons.cancel,
                 color: Colors.white,
               )
-            : _status == DownloadTaskStatus.complete
+            : status == DownloadTaskStatus.complete
                 ? const Icon(
                     Icons.download_done,
                     color: Colors.white,
                   )
-                : _status == DownloadTaskStatus.failed
+                : status == DownloadTaskStatus.failed
                     ? const Icon(
                         Icons.error,
                         color: Colors.white,
                       )
-                    : _status == DownloadTaskStatus.paused
+                    : status == DownloadTaskStatus.paused
                         ? const Icon(
                             Icons.pause,
                             color: Colors.white,
                           )
-                        : _status == DownloadTaskStatus.running
+                        : status == DownloadTaskStatus.running
                             ? const Icon(
                                 Icons.downloading,
                                 color: Colors.white,
@@ -136,7 +137,7 @@ class _LessonPageTileState extends State<LessonPageTile> {
                 IconButton(
                   onPressed: () {
                     log("play audio widget");
-                    widget.player.seek(Duration.zero, index: 1);
+                    widget.player.seek(Duration.zero, index: widget.playIndex);
                     widget.player.play();
                   },
                   icon: Icon(

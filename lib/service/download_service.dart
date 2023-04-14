@@ -7,19 +7,19 @@ class DownloadService {
     List<Map> downloadsListMaps = [];
     List<DownloadTask>? getTasks = await FlutterDownloader.loadTasks();
     log("getting task...service");
-    for (var _task in getTasks!) {
-      if (_task.status == DownloadTaskStatus.complete) {
-        FlutterDownloader.remove(taskId: _task.taskId);
+    for (var task in getTasks!) {
+      if (task.status == DownloadTaskStatus.complete) {
+        FlutterDownloader.remove(taskId: task.taskId);
       }
-      Map _map = {};
-      _map['url'] = _task.url;
-      _map['status'] = _task.status;
-      _map['progress'] = _task.progress;
-      _map['id'] = _task.taskId;
-      _map['filename'] = _task.filename;
-      _map['savedDirectory'] = _task.savedDir;
-      log("status: ${_task.status}  filename: ${_task.filename}");
-      downloadsListMaps.add(_map);
+      Map map = {};
+      map['url'] = task.url;
+      map['status'] = task.status;
+      map['progress'] = task.progress;
+      map['id'] = task.taskId;
+      map['filename'] = task.filename;
+      map['savedDirectory'] = task.savedDir;
+      log("status: ${task.status}  filename: ${task.filename}");
+      downloadsListMaps.add(map);
     }
     return downloadsListMaps;
   }

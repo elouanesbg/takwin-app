@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -60,57 +59,65 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
   Future task() async {
     List<DownloadTask>? getTasks = await FlutterDownloader.loadTasks();
     log("getting task...");
+    // ignore: no_leading_underscores_for_local_identifiers
     for (var _task in getTasks!) {
       if (_task.status == DownloadTaskStatus.complete) {
         FlutterDownloader.remove(taskId: _task.taskId);
       }
-      Map _map = {};
-      _map['status'] = _task.status;
-      _map['progress'] = _task.progress;
-      _map['id'] = _task.taskId;
-      _map['filename'] = _task.filename;
-      _map['savedDirectory'] = _task.savedDir;
+      Map map = {};
+      map['status'] = _task.status;
+      map['progress'] = _task.progress;
+      map['id'] = _task.taskId;
+      map['filename'] = _task.filename;
+      map['savedDirectory'] = _task.savedDir;
       log("status: ${_task.status}  filename: ${_task.filename}");
-      downloadsListMaps.add(_map);
+      downloadsListMaps.add(map);
     }
     setState(() {});
   }
 
-  Widget downloadStatus(DownloadTaskStatus _status) {
-    return _status == DownloadTaskStatus.canceled
-        ? const Icon(
-            Icons.cancel,
-            color: Colors.white,
-          )
-        : _status == DownloadTaskStatus.complete
-            ? const Icon(
-                Icons.download_done,
-                color: Colors.white,
-              )
-            : _status == DownloadTaskStatus.failed
-                ? const Icon(
-                    Icons.error,
-                    color: Colors.white,
-                  )
-                : _status == DownloadTaskStatus.paused
-                    ? const Icon(
-                        Icons.pause,
-                        color: Colors.white,
-                      )
-                    : _status == DownloadTaskStatus.running
-                        ? const Icon(
-                            Icons.downloading,
-                            color: Colors.white,
-                          )
-                        : const Icon(
-                            Icons.query_builder,
-                            color: Colors.white,
-                          );
+  Widget downloadStatus(DownloadTaskStatus status) {
+    if (status == DownloadTaskStatus.complete) {
+      return const Icon(
+        Icons.download_done,
+        color: Colors.white,
+      );
+    } else if (status == DownloadTaskStatus.canceled) {
+      return const Icon(
+        Icons.cancel,
+        color: Colors.white,
+      );
+    } else if (status == DownloadTaskStatus.enqueued) {
+      return const Icon(
+        Icons.lock_clock,
+        color: Colors.white,
+      );
+    } else if (status == DownloadTaskStatus.failed) {
+      return const Icon(
+        Icons.running_with_errors,
+        color: Colors.white,
+      );
+    } else if (status == DownloadTaskStatus.paused) {
+      return const Icon(
+        Icons.pause_circle,
+        color: Colors.white,
+      );
+    } else if (status == DownloadTaskStatus.running) {
+      return const Icon(
+        Icons.download_for_offline,
+        color: Colors.white,
+      );
+    } else {
+      return const Icon(
+        Icons.cancel,
+        color: Colors.white,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return downloadsListMaps.length == 0
+    return downloadsListMaps.isEmpty
         ? const Expanded(child: Center(child: Text("لا يوجد تحميلات")))
         : ListView.builder(
             itemCount: downloadsListMaps.length,
@@ -118,12 +125,11 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
             scrollDirection: Axis.vertical,
             physics: const ClampingScrollPhysics(),
             itemBuilder: (context, index) {
-              Map _map = downloadsListMaps[index];
-              String _filename = _map['filename'];
-              int _progress = _map['progress'];
-              DownloadTaskStatus _status = _map['status'];
-              String _savedDirectory = _map['savedDirectory'];
-              String _taskId = _map['id'];
+              Map map = downloadsListMaps[index];
+              String filename = map['filename'];
+              int progress = map['progress'];
+              DownloadTaskStatus status = map['status'];
+              String taskId = map['id'];
               return Container(
                 margin: const EdgeInsets.only(
                   bottom: 10,
@@ -145,7 +151,7 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
                             ).withOpacity(0.4),
                             width: 40,
                             height: 40,
-                            child: downloadStatus(_status),
+                            child: downloadStatus(status),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
@@ -153,7 +159,7 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(_filename),
+                                Text(filename),
                               ],
                             ),
                           ),
@@ -161,7 +167,7 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
                             padding: const EdgeInsets.only(right: 8),
                             child: IconButton(
                               onPressed: () {
-                                FlutterDownloader.pause(taskId: _taskId);
+                                FlutterDownloader.pause(taskId: taskId);
                                 setState(() {});
                               },
                               icon: const Icon(
@@ -176,7 +182,7 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
                             padding: const EdgeInsets.only(right: 8),
                             child: IconButton(
                               onPressed: () {
-                                FlutterDownloader.resume(taskId: _taskId);
+                                FlutterDownloader.resume(taskId: taskId);
                                 setState(() {});
                               },
                               icon: const Icon(
@@ -190,8 +196,9 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: IconButton(
-                              onPressed: () {
-                                FlutterDownloader.remove(taskId: _taskId);
+                              onPressed: () async {
+                                FlutterDownloader.remove(taskId: taskId);
+                                await task();
                                 setState(() {});
                               },
                               icon: const Icon(
@@ -212,7 +219,7 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
                             color: const Color(0xFF234E70),
                             backgroundColor: const Color(0xFF2C5F2D),
                             minHeight: 8,
-                            value: _progress / 100,
+                            value: progress / 100,
                           ),
                         ),
                       ],
