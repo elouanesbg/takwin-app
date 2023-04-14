@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,6 +12,15 @@ import 'package:takwin/model/lesson_model.dart';
 import 'package:takwin/provider/user_provide.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Plugin must be initialized before using
+  await FlutterDownloader.initialize(
+      debug:
+          false, // optional: set to false to disable printing logs to console (default: true)
+      ignoreSsl:
+          true // option: set to false to disable working with http links (default: false)
+      );
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
@@ -30,6 +40,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -54,7 +65,6 @@ class MyApp extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.error != null) {
-                      log("${snapshot.error}");
                       return const Scaffold(
                         body: Center(
                           child: Text('Error initializing hive data store.'),

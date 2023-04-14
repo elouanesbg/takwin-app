@@ -1,17 +1,28 @@
 import 'dart:developer';
-
+import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:takwin/model/lesson_model.dart';
 import 'package:takwin/provider/user_provide.dart';
+import 'package:takwin/service/download_service.dart';
 import 'package:takwin/view/lesson/audio_controler.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:takwin/view/lesson/audio_metadata.dart';
+import 'package:takwin/view/lesson/lesson_page_tile.dart';
+import 'package:uuid/uuid.dart';
+import 'package:collection/collection.dart';
 
 class LessonPage extends StatefulWidget {
   final Lesson lesson;
@@ -24,9 +35,10 @@ class LessonPage extends StatefulWidget {
 class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   late AudioPlayer _player;
   late ConcatenatingAudioSource _playList;
-  late String audioUrl =
-      '${widget.lesson.url}/${widget.lesson.audioFiles[0].name}';
+
   bool hasConnection = false;
+  final ReceivePort _port = ReceivePort();
+  List<Map> downloadsListMaps = [];
 
   List<AudioSource> getPlayList() {
     List<AudioSource> list = [];
@@ -60,6 +72,16 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
     ));
     _playList = ConcatenatingAudioSource(children: getPlayList());
     _init();
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) {
+      String id = data[0];
+      DownloadTaskStatus status = data[1];
+      int progress = data[2];
+      setState(() {});
+    });
+
+    FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
@@ -76,6 +98,10 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   }
 
   Future<void> _init() async {
+    var task = await DownloadService().task();
+    setState(() {
+      downloadsListMaps = task;
+    });
     hasConnection = await InternetConnectionChecker().hasConnection;
 
     await _player.setLoopMode(LoopMode.all);
@@ -103,8 +129,41 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
     _player.dispose();
     super.dispose();
+  }
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('downloader_send_port')!;
+    send.send([id, status, progress]);
+  }
+
+  Future<void> requestDownload(String url) async {
+    final status = await Permission.storage.request();
+    if (status.isGranted) {
+      //create file name
+      final extension = path.extension(url);
+      Uuid uuid = const Uuid();
+      String name = '${uuid.v1()}$extension';
+      final dir =
+          await getApplicationDocumentsDirectory(); //From path_provider package
+      var localPath = dir.path + name;
+      final savedDir = Directory(localPath);
+      await savedDir.create(recursive: true).then((value) async {
+        await FlutterDownloader.enqueue(
+          url: url,
+          fileName: name,
+          savedDir: localPath,
+          showNotification: true,
+          openFileFromNotification: false,
+        );
+      });
+    } else {
+      log("permission not granted...");
+    }
   }
 
   @override
@@ -149,97 +208,20 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
                           scrollDirection: Axis.vertical,
                           physics: const ClampingScrollPhysics(),
                           itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                    bottom: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      15.0,
-                                    ),
-                                    color: Colors.white.withOpacity(
-                                      0.3,
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                            Icons.download,
-                                            color: Color(0xFF2C5F2D),
-                                            size: 32,
-                                          ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            //overflow: TextOverflow.ellipsis,
-                                            widget
-                                                .lesson.audioFiles[index].title,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall!
-                                                .copyWith(
-                                                  fontSize: 14,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            if (hasConnection) {
-                                              _player.seek(Duration.zero,
-                                                  index: index);
-                                              _player.play();
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                duration: const Duration(
-                                                  seconds: 2,
-                                                ),
-                                                backgroundColor:
-                                                    Colors.redAccent,
-                                                content: Center(
-                                                  child: Text(
-                                                    "الرجاء التحقق من اتصالك بالانترنت",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium!
-                                                        .copyWith(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                  ),
-                                                ),
-                                              ));
-                                            }
-                                          },
-                                          icon: Icon(
-                                            Icons.play_circle,
-                                            color: index == currentIndex
-                                                ? const Color(0xFF2C5F2D)
-                                                : const Color(0xFF234E70),
-                                            size: 40,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                //old
-                              ],
+                            String url =
+                                "${widget.lesson.url}/${widget.lesson.audioFiles[index].name}";
+                            Map? _map = downloadsListMaps.firstWhereOrNull(
+                                (element) => element["url"] == url);
+                            return LessonPageTile(
+                              audioFile: widget.lesson.audioFiles[index],
+                              status: _map == null
+                                  ? DownloadTaskStatus.undefined
+                                  : _map!["status"],
+                              isPlay: index == currentIndex,
+                              player: _player,
+                              playIndex: index,
+                              audioUrl:
+                                  "${widget.lesson.url}/${widget.lesson.audioFiles[index].name}",
                             );
                           },
                         );
@@ -337,6 +319,51 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
       ),
     );
   }
+
+  /* double progress = -1;
+  Map<String, double> downloadProgress = {};
+  void downloadFile(String url) async {
+    log("start download: $url");
+    final request = Request('GET', Uri.parse(url));
+
+    final StreamedResponse response = await Client().send(request);
+
+    final contentLength = response.contentLength;
+
+    //update ui set download started (set it as 0.0001)
+    log("update ui contentLength: $contentLength");
+    // ignore: use_build_context_synchronously
+    setState(() {
+      progress = 0.001;
+    });
+    List<int> bytes = [];
+
+    final file = await _getFile('audio.mp3');
+    int downloadProgress = 0;
+    response.stream.listen((List<int> value) {
+      bytes.addAll(value);
+      final downloadLength = value.length;
+      downloadProgress += downloadLength;
+      log("stream : ${downloadProgress.toDouble()}");
+      // update the ui (downloadLength.toDouble()/ (contentLength) ?? 1)
+      setState(() {
+        progress = (downloadProgress.toDouble() / contentLength!);
+      });
+    }, onDone: () async {
+      log("Done");
+      //update the ui set download done
+      setState(() {
+        progress = 1;
+      });
+      await file.writeAsBytes(bytes);
+    });
+  }
+*/
+  /*Future<File> _getFile(String filename) async {
+    final dir = await getTemporaryDirectory();
+    log("save to ${dir.path}/$filename ");
+    return File("${dir.path}/$filename");
+  }*/
 }
 
 class PositionData {

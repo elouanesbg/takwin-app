@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:takwin/model/main_category_model.dart';
 import 'package:takwin/view/filter/main_category_filter.dart';
@@ -34,6 +33,16 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /*StreamBuilder(
+                    stream: DownloadService().DownloadStream(widget
+                        .takwinData[0].categorys[0].subcategorys[0].lessons[0]),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const CircularProgressIndicator();
+                      }
+                      return Text("${snapshot.data}");
+                    },
+                  ),*/
                   const Padding(
                     padding: EdgeInsets.only(
                       left: 10,

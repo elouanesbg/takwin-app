@@ -49,4 +49,21 @@ class UserData extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  // lesson sownload
+  Set<String> downloadQueen = {};
+
+  void addDownload(String url) {
+    downloadQueen.add(url);
+    notifyListeners();
+  }
+
+  void removeDownload(String url) {
+    downloadQueen.remove(url);
+    notifyListeners();
+  }
+
+  int getDownloadQueenSize() {
+    return downloadQueen.length;
+  }
 }

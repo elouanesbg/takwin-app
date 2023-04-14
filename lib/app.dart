@@ -1,8 +1,13 @@
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:takwin/main_app_bar.dart';
 import 'package:takwin/model/main_category_model.dart';
 import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/about/about_page.dart';
+import 'package:takwin/view/download/download_task_list.dart';
 import 'package:takwin/view/favorite/favorite_page.dart';
 import 'package:takwin/view/home/home_page.dart';
 
@@ -17,7 +22,7 @@ class _AppState extends State<App> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late List<MainCategory> takwinData = [];
   bool isLoadingData = true;
-  var _currentIndex = 0;
+  var _currentIndex = 2;
 
   getData() async {
     var data = await DataService().readJson();
@@ -46,6 +51,15 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     getData();
+    FlutterDownloader.registerCallback(downloadCallback);
+    // _checkPermission();
+  }
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
   }
 
   @override
@@ -76,7 +90,7 @@ class _AppState extends State<App> {
                       FavoritePage(
                           subcategory:
                               takwinData[0].categorys[0].subcategorys[0]),
-                    if (_currentIndex == 2) AboutPage(),
+                    if (_currentIndex == 2) const OfflineDownloads(),
                     if (_currentIndex == 3) AboutPage(),
                   ],
                 )),
@@ -109,8 +123,8 @@ class _AppState extends State<App> {
             label: "المفضلة",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: "الإعدادات",
+            icon: Icon(Icons.download),
+            label: "التحميلات",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.help),
