@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:takwin/model/audio_files_model.dart';
 part 'lesson_model.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 3)
 class Lesson extends HiveObject {
   @HiveField(0)
   final String title;

@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 part 'audio_files_model.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 4)
 class AudioFiles extends HiveObject {
   @HiveField(0)
   final String name;

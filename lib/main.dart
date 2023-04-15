@@ -6,7 +6,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:takwin/app.dart';
 import 'package:takwin/model/audio_files_model.dart';
+import 'package:takwin/model/category_model.dart';
 import 'package:takwin/model/lesson_model.dart';
+import 'package:takwin/model/main_category_model.dart';
+import 'package:takwin/model/subcategory_model.dart';
 import 'package:takwin/provider/user_provide.dart';
 
 void main() async {
@@ -26,6 +29,9 @@ void main() async {
   );
   Hive.registerAdapter(AudioFilesAdapter());
   Hive.registerAdapter(LessonAdapter());
+  Hive.registerAdapter(SubcategoryAdapter());
+  Hive.registerAdapter(CategoryAdapter());
+  Hive.registerAdapter(MainCategoryAdapter());
   runApp(const MyApp());
 }
 

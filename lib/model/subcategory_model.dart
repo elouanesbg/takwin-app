@@ -1,8 +1,14 @@
+import 'package:hive/hive.dart';
 import 'package:takwin/model/lesson_model.dart';
+part 'subcategory_model.g.dart';
 
+@HiveType(typeId: 2)
 class Subcategory {
+  @HiveField(0)
   final String title;
+  @HiveField(1)
   final String description;
+  @HiveField(2)
   final List<Lesson> lessons;
 
   Subcategory(

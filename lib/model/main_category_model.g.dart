@@ -1,38 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'audio_files_model.dart';
+part of 'main_category_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AudioFilesAdapter extends TypeAdapter<AudioFiles> {
+class MainCategoryAdapter extends TypeAdapter<MainCategory> {
   @override
-  final int typeId = 4;
+  final int typeId = 0;
 
   @override
-  AudioFiles read(BinaryReader reader) {
+  MainCategory read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AudioFiles(
-      name: fields[0] as String,
-      title: fields[1] as String,
-      length: fields[2] as String,
+    return MainCategory(
+      title: fields[0] as String,
+      categorys: (fields[1] as List).cast<Category>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, AudioFiles obj) {
+  void write(BinaryWriter writer, MainCategory obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.name)
-      ..writeByte(1)
-      ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.length);
+      ..writeByte(0)
+      ..write(obj.title)
+      ..writeByte(1)
+      ..write(obj.categorys);
   }
 
   @override
@@ -41,7 +38,7 @@ class AudioFilesAdapter extends TypeAdapter<AudioFiles> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AudioFilesAdapter &&
+      other is MainCategoryAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
