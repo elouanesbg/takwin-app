@@ -9,8 +9,18 @@ class AudioFiles extends HiveObject {
   final String title;
   @HiveField(2)
   final String length;
+  @HiveField(3)
+  String? onlineUrl = "";
+  @HiveField(4)
+  bool? isAvilableOffline = false;
+  @HiveField(5)
+  String? offlineFilePath = "";
 
-  AudioFiles({required this.name, required this.title, required this.length});
+  AudioFiles(
+      {required this.name,
+      required this.title,
+      required this.length,
+      this.onlineUrl});
 
   factory AudioFiles.fromJson(Map<String, dynamic> data) {
     return AudioFiles(
