@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:takwin/view/download/download_tile.dart';
@@ -14,94 +13,75 @@ class OfflineDownloads extends StatefulWidget with WidgetsBindingObserver {
 
 class _OfflineDownloadsState extends State<OfflineDownloads> {
   //final ReceivePort _port = ReceivePort();
-  List<Map> downloadsListMaps = [];
+  //List<Map> downloadsListMaps = [];
+  List<DownloadTask> tasks = [];
 
   @override
   void initState() {
     super.initState();
-    task();
+    loadTask();
   }
 
-  Future task() async {
+  Future loadTask() async {
     List<DownloadTask>? getTasks = await FlutterDownloader.loadTasks();
-    log("getting task...");
-    // ignore: no_leading_underscores_for_local_identifiers
-    for (var _task in getTasks!) {
-      if (_task.status == DownloadTaskStatus.complete) {
-        FlutterDownloader.remove(taskId: _task.taskId);
-      }
-      Map map = {};
-      map['status'] = _task.status;
-      map['progress'] = _task.progress;
-      map['id'] = _task.taskId;
-      map['filename'] = _task.filename;
-      map['savedDirectory'] = _task.savedDir;
-      log("status: ${_task.status}  filename: ${_task.filename}");
-      downloadsListMaps.add(map);
-    }
-    setState(() {});
+
+    setState(() {
+      tasks = [];
+      tasks.addAll(getTasks!);
+    });
   }
 
-  Widget downloadStatus(DownloadTaskStatus status) {
-    log("getting statud: $status");
+  Future<void> _requestDownload(DownloadTask task) async {}
 
-    if (status == DownloadTaskStatus.complete) {
-      return const Icon(
-        Icons.download_done,
-        color: Colors.white,
-      );
-    } else if (status == DownloadTaskStatus.canceled) {
-      return const Icon(
-        Icons.cancel,
-        color: Colors.white,
-      );
-    } else if (status == DownloadTaskStatus.enqueued) {
-      return const Icon(
-        Icons.lock_clock,
-        color: Colors.white,
-      );
-    } else if (status == DownloadTaskStatus.failed) {
-      return const Icon(
-        Icons.running_with_errors,
-        color: Colors.white,
-      );
-    } else if (status == DownloadTaskStatus.paused) {
-      return const Icon(
-        Icons.pause_circle,
-        color: Colors.white,
-      );
-    } else if (status == DownloadTaskStatus.running) {
-      return const Icon(
-        Icons.download_for_offline,
-        color: Colors.white,
-      );
-    } else {
-      return const Icon(
-        Icons.cancel,
-        color: Colors.white,
-      );
-    }
+  Future<void> _pauseDownload(DownloadTask task) async {
+    await FlutterDownloader.pause(taskId: task.taskId);
+    await loadTask();
+  }
+
+  Future<void> _resumeDownload(DownloadTask task) async {
+    await FlutterDownloader.resume(taskId: task.taskId);
+    await loadTask();
+  }
+
+  Future<void> _retryDownload(DownloadTask task) async {
+    await FlutterDownloader.retry(taskId: task.taskId);
+    await loadTask();
+  }
+
+  Future<void> _delete(DownloadTask task) async {
+    await FlutterDownloader.remove(
+      taskId: task.taskId,
+      shouldDeleteContent: true,
+    );
+    await loadTask();
   }
 
   @override
   Widget build(BuildContext context) {
-    return downloadsListMaps.isEmpty
+    return tasks.isEmpty
         ? const Expanded(child: Center(child: Text("لا يوجد تحميلات")))
         : ListView.builder(
-            itemCount: downloadsListMaps.length,
+            itemCount: tasks.length,
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             physics: const ClampingScrollPhysics(),
             itemBuilder: (context, index) {
-              Map map = downloadsListMaps[index];
-
-              int progress = map['progress'];
-              DownloadTaskStatus status = map['status'];
-              String taskId = map['id'];
               return DownloadTile(
-                progress: progress,
-                status: status,
-                taskId: taskId,
+                task: tasks[index],
+                onActionTap: (task) {
+                  if (task.status == DownloadTaskStatus.undefined) {
+                    _requestDownload(task);
+                  } else if (task.status == DownloadTaskStatus.running) {
+                    _pauseDownload(task);
+                  } else if (task.status == DownloadTaskStatus.paused) {
+                    _resumeDownload(task);
+                  } else if (task.status == DownloadTaskStatus.complete ||
+                      task.status == DownloadTaskStatus.canceled) {
+                    _delete(task);
+                  } else if (task.status == DownloadTaskStatus.failed) {
+                    _retryDownload(task);
+                  }
+                },
               );
             },
           );
