@@ -51,10 +51,11 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     getData();
-    FlutterDownloader.registerCallback(downloadCallback);
+    FlutterDownloader.registerCallback(downloadCallback, step: 1);
     // _checkPermission();
   }
 
+  @pragma('vm:entry-point')
   static void downloadCallback(
       String id, DownloadTaskStatus status, int progress) {
     final SendPort? send =
