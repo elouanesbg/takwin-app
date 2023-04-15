@@ -3,7 +3,7 @@ import 'package:takwin/model/subcategory_model.dart';
 part 'category_model.g.dart';
 
 @HiveType(typeId: 1)
-class Category {
+class Category extends HiveObject {
   @HiveField(0)
   final String title;
   @HiveField(1)

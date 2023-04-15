@@ -3,7 +3,7 @@ import 'package:takwin/model/lesson_model.dart';
 part 'subcategory_model.g.dart';
 
 @HiveType(typeId: 2)
-class Subcategory {
+class Subcategory extends HiveObject {
   @HiveField(0)
   final String title;
   @HiveField(1)

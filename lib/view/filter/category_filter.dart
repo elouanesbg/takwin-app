@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:takwin/model/category_model.dart';
 import 'package:takwin/view/filter/sub_category_filter.dart';
 
-class CategoryFilter extends StatelessWidget {
+class CategoryFilter extends StatefulWidget {
+  final int index;
   final String title;
   final List<Category> categorys;
   const CategoryFilter(
-      {super.key, required this.categorys, required this.title});
+      {super.key,
+      required this.categorys,
+      required this.title,
+      required this.index});
 
+  @override
+  State<CategoryFilter> createState() => _CategoryFilterState();
+}
+
+class _CategoryFilterState extends State<CategoryFilter> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -27,7 +36,7 @@ class CategoryFilter extends StatelessWidget {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
-            title: Text(title),
+            title: Text(widget.title),
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -35,7 +44,7 @@ class CategoryFilter extends StatelessWidget {
                 8,
               ),
               child: ListView.builder(
-                  itemCount: categorys.length,
+                  itemCount: widget.categorys.length,
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   physics: const ClampingScrollPhysics(),
@@ -46,9 +55,10 @@ class CategoryFilter extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return SubCategoryFilter(
-                                  title: categorys[index].title,
-                                  subcategorys: categorys[index].subcategorys);
-                            }).then((value) => Navigator.pop(context));
+                                  title: widget.categorys[index].title,
+                                  subcategorys:
+                                      widget.categorys[index].subcategorys);
+                            });
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -78,7 +88,7 @@ class CategoryFilter extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        categorys[index].title,
+                                        widget.categorys[index].title,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge!

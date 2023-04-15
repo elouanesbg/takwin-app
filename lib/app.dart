@@ -4,8 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:takwin/main_app_bar.dart';
-import 'package:takwin/model/main_category_model.dart';
-import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/about/about_page.dart';
 import 'package:takwin/view/download/download_task_list.dart';
 import 'package:takwin/view/favorite/favorite_page.dart';
@@ -20,39 +18,14 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late List<MainCategory> takwinData = [];
-  bool isLoadingData = true;
-  var _currentIndex = 2;
 
-  getData() async {
-    var data = await DataService().readJson();
-    for (var element in data) {
-      for (var element in element.categorys) {
-        for (var element in element.subcategorys) {
-          element.lessons.removeWhere((element) => element.audioFiles.isEmpty);
-        }
-      }
-    }
-    for (var element in data) {
-      for (var element in element.categorys) {
-        element.subcategorys.removeWhere((element) => element.lessons.isEmpty);
-      }
-    }
-    for (var element in data) {
-      element.categorys.removeWhere((element) => element.subcategorys.isEmpty);
-    }
-    setState(() {
-      takwinData = data;
-      isLoadingData = false;
-    });
-  }
+  var _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    getData();
+
     FlutterDownloader.registerCallback(downloadCallback, step: 1);
-    // _checkPermission();
   }
 
   @pragma('vm:entry-point')
@@ -82,19 +55,14 @@ class _AppState extends State<App> {
           key: _scaffoldKey,
           appBar: const MainAppBar(),
           bottomNavigationBar: _mainBottomNavigationBar(),
-          body: isLoadingData
-              ? const Center(child: CircularProgressIndicator())
-              : Column(
-                  children: [
-                    if (_currentIndex == 0) HomePage(takwinData: takwinData),
-                    if (_currentIndex == 1)
-                      FavoritePage(
-                          subcategory:
-                              takwinData[0].categorys[0].subcategorys[0]),
-                    if (_currentIndex == 2) const OfflineDownloads(),
-                    if (_currentIndex == 3) AboutPage(),
-                  ],
-                )),
+          body: Column(
+            children: [
+              if (_currentIndex == 0) const HomePage(),
+              if (_currentIndex == 1) const FavoritePage(),
+              if (_currentIndex == 2) const OfflineDownloads(),
+              if (_currentIndex == 3) AboutPage(),
+            ],
+          )),
     );
   }
 

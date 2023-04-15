@@ -11,6 +11,7 @@ import 'package:takwin/model/lesson_model.dart';
 import 'package:takwin/model/main_category_model.dart';
 import 'package:takwin/model/subcategory_model.dart';
 import 'package:takwin/provider/user_provide.dart';
+import 'package:takwin/service/data_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,7 @@ void main() async {
 Future _initHive() async {
   var dir = await getApplicationDocumentsDirectory();
   Hive.init(dir.path);
+  await DataService().getData();
 }
 
 class MyApp extends StatelessWidget {
@@ -50,6 +52,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => UserData(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'تكوين الراسخين',
         theme: ThemeData(
           appBarTheme: const AppBarTheme(

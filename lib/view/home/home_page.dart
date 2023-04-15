@@ -5,16 +5,27 @@ import 'package:takwin/view/filter/main_category_filter.dart';
 import 'package:takwin/view/home/lesson_view_tile.dart';
 import 'package:takwin/view/lesson/lesson_page.dart';
 
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
 class HomePage extends StatefulWidget {
-  final List<MainCategory> takwinData;
-  const HomePage({super.key, required this.takwinData});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  late Box<MainCategory> mainCategoryBox;
+  late List<MainCategory> mainCategoryList = [];
   final _random = Random();
+
+  @override
+  void initState() {
+    mainCategoryBox = Hive.box<MainCategory>('takwinData');
+    mainCategoryList.addAll(mainCategoryBox.values.map((e) => e).toList());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,16 +44,6 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /*StreamBuilder(
-                    stream: DownloadService().DownloadStream(widget
-                        .takwinData[0].categorys[0].subcategorys[0].lessons[0]),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const CircularProgressIndicator();
-                      }
-                      return Text("${snapshot.data}");
-                    },
-                  ),*/
                   const Padding(
                     padding: EdgeInsets.only(
                       left: 10,
@@ -110,8 +111,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   geRandomeLesson() {
-    final randomMainCategoryIndex = _random.nextInt(widget.takwinData.length);
-    final randomMainCategory = widget.takwinData[randomMainCategoryIndex];
+    mainCategoryBox.values.map((e) => e).toList();
+    final randomMainCategoryIndex = _random.nextInt(mainCategoryList.length);
+    final randomMainCategory = mainCategoryList[randomMainCategoryIndex];
 
     final randomCategoryIndex =
         _random.nextInt(randomMainCategory.categorys.length);
@@ -279,9 +281,7 @@ class _TopWidget extends StatelessWidget {
             onTap: () => showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return MainCategoryFilter(
-                    mainCategorys: widget.takwinData,
-                  );
+                  return const MainCategoryFilter();
                 }),
             child: Column(
               children: [

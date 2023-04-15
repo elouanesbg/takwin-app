@@ -42,14 +42,12 @@ class SubCategoryFilter extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () async {
-                        Navigator.of(context)
-                            .push(
-                              MaterialPageRoute(
-                                builder: (_) => LessonHomePage(
-                                    subcategory: subcategorys[index]),
-                              ),
-                            )
-                            .then((value) => Navigator.pop(context));
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => LessonHomePage(
+                                subcategory: subcategorys[index]),
+                          ),
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
