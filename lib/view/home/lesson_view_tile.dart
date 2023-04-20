@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:takwin/model/lesson_model.dart';
 import 'package:takwin/view/lesson/lesson_page.dart';
 
 class LessonViewTile extends StatelessWidget {
-  final String subcategoryTitle;
-  final Lesson lesson;
-  const LessonViewTile(
-      {super.key, required this.lesson, required this.subcategoryTitle});
+  final String mainCategory;
+  final String category;
+  final String subcategory;
+  final String lesson;
+  const LessonViewTile({
+    super.key,
+    required this.mainCategory,
+    required this.category,
+    required this.subcategory,
+    required this.lesson,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +20,9 @@ class LessonViewTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => LessonPage(
+            mainCategory: mainCategory,
+            category: category,
+            subcategory: subcategory,
             lesson: lesson,
           ),
         ),
@@ -30,7 +39,7 @@ class LessonViewTile extends StatelessWidget {
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
                   overflow: TextOverflow.ellipsis,
-                  subcategoryTitle,
+                  subcategory,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Colors.white,
                         fontSize: 16,
@@ -71,7 +80,7 @@ class LessonViewTile extends StatelessWidget {
                     Flexible(
                       child: Text(
                         //overflow: TextOverflow.ellipsis,
-                        lesson.title,
+                        lesson,
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               fontSize: 14,
                               color: Colors.white,

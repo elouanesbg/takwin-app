@@ -1,8 +1,6 @@
-import 'dart:isolate';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:get/get.dart';
+import 'package:takwin/controller/download_controller.dart';
 import 'package:takwin/main_app_bar.dart';
 import 'package:takwin/view/about/about_page.dart';
 import 'package:takwin/view/download/download_task_list.dart';
@@ -18,23 +16,8 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  final downloadController = Get.put(DownloadController());
   var _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    FlutterDownloader.registerCallback(downloadCallback, step: 1);
-  }
-
-  @pragma('vm:entry-point')
-  static void downloadCallback(
-      String id, DownloadTaskStatus status, int progress) {
-    final SendPort? send =
-        IsolateNameServer.lookupPortByName('downloader_send_port');
-    send?.send([id, status, progress]);
-  }
 
   @override
   Widget build(BuildContext context) {

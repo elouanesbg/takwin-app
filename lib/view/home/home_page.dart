@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:takwin/model/main_category_model.dart';
+import 'package:takwin/model/audio_data_model.dart';
 import 'package:takwin/view/filter/main_category_filter.dart';
 import 'package:takwin/view/home/lesson_view_tile.dart';
 import 'package:takwin/view/lesson/lesson_page.dart';
@@ -16,14 +16,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Box<MainCategory> mainCategoryBox;
-  late List<MainCategory> mainCategoryList = [];
+  late List<AudioData> takwinData = [];
   final _random = Random();
 
   @override
   void initState() {
-    mainCategoryBox = Hive.box<MainCategory>('takwinData');
-    mainCategoryList.addAll(mainCategoryBox.values.map((e) => e).toList());
+    var box = Hive.box<AudioData>('takwinData');
+    takwinData.addAll(box.values.map((e) => e).toList());
     super.initState();
   }
 
@@ -65,10 +64,12 @@ class _HomePageState extends State<HomePage> {
                       itemCount: 10,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        final randomLesson = geRandomeLesson();
+                        final randomLesson = geRandomeLesson(10);
                         return LessonViewTile(
-                          lesson: randomLesson['lesson'],
-                          subcategoryTitle: randomLesson['subcategoryTitle'],
+                          mainCategory: randomLesson[index]["mainCategory"],
+                          category: randomLesson[index]["category"],
+                          subcategory: randomLesson[index]["subcategory"],
+                          lesson: randomLesson[index]["lesson"],
                         );
                       },
                     ),
@@ -91,8 +92,10 @@ class _HomePageState extends State<HomePage> {
                           itemCount: 5,
                           scrollDirection: Axis.vertical,
                           itemBuilder: (context, index) {
-                            final randomLesson = geRandomeLesson();
-                            return AudioViewTile(randomLesson: randomLesson);
+                            final randomLesson = geRandomeLesson(5);
+                            return AudioViewTile(
+                              randomLesson: randomLesson[index],
+                            );
                           },
                         ),
                       ],
@@ -110,26 +113,24 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  geRandomeLesson() {
-    mainCategoryBox.values.map((e) => e).toList();
-    final randomMainCategoryIndex = _random.nextInt(mainCategoryList.length);
-    final randomMainCategory = mainCategoryList[randomMainCategoryIndex];
+  List<Map> geRandomeLesson(int size) {
+    List<Map> randomLesson = [];
+    for (int i = 0; i < size; i++) {
+      final randomDataindex = _random.nextInt(takwinData.length);
 
-    final randomCategoryIndex =
-        _random.nextInt(randomMainCategory.categorys.length);
-    final randomCategory = randomMainCategory.categorys[randomCategoryIndex];
+      final String mainCategory = takwinData[randomDataindex].mainCategoryTitle;
 
-    final randomSubCategoryIndex =
-        _random.nextInt(randomCategory.subcategorys.length);
-    final randomSubCategory =
-        randomCategory.subcategorys[randomSubCategoryIndex];
-
-    final randomLessonIndex = _random.nextInt(randomSubCategory.lessons.length);
-    final randomLesson = randomSubCategory.lessons[randomLessonIndex];
-    return {
-      "lesson": randomLesson,
-      "subcategoryTitle": randomSubCategory.title,
-    };
+      final String category = takwinData[randomDataindex].categoryTitle;
+      final String subcategory = takwinData[randomDataindex].subcategoryTitle;
+      final String lesson = takwinData[randomDataindex].lessonTitle;
+      randomLesson.add({
+        "mainCategory": mainCategory,
+        "category": category,
+        "subcategory": subcategory,
+        "lesson": lesson,
+      });
+    }
+    return randomLesson;
   }
 }
 
@@ -148,6 +149,9 @@ class AudioViewTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => LessonPage(
+            mainCategory: randomLesson["mainCategory"],
+            category: randomLesson["category"],
+            subcategory: randomLesson["subcategory"],
             lesson: randomLesson["lesson"],
           ),
         ),
@@ -178,7 +182,7 @@ class AudioViewTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        randomLesson["subcategoryTitle"],
+                        randomLesson["subcategory"],
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               color: Colors.white,
                               fontSize: 16,
@@ -186,7 +190,7 @@ class AudioViewTile extends StatelessWidget {
                             ),
                       ),
                       Text(
-                        randomLesson["lesson"].title,
+                        randomLesson["lesson"],
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               fontSize: 14,
                               color: Colors.white,

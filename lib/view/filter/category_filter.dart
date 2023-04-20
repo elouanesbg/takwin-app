@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:takwin/model/category_model.dart';
+import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/filter/sub_category_filter.dart';
 
 class CategoryFilter extends StatefulWidget {
-  final int index;
-  final String title;
-  final List<Category> categorys;
-  const CategoryFilter(
-      {super.key,
-      required this.categorys,
-      required this.title,
-      required this.index});
+  final String mainCategory;
+  const CategoryFilter({super.key, required this.mainCategory});
 
   @override
   State<CategoryFilter> createState() => _CategoryFilterState();
 }
 
 class _CategoryFilterState extends State<CategoryFilter> {
+  late Set<String> categorys;
+  @override
+  void initState() {
+    categorys = DataService().getCategory(widget.mainCategory);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -36,7 +37,7 @@ class _CategoryFilterState extends State<CategoryFilter> {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
-            title: Text(widget.title),
+            title: Text(widget.mainCategory),
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -44,7 +45,7 @@ class _CategoryFilterState extends State<CategoryFilter> {
                 8,
               ),
               child: ListView.builder(
-                  itemCount: widget.categorys.length,
+                  itemCount: categorys.length,
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   physics: const ClampingScrollPhysics(),
@@ -55,9 +56,10 @@ class _CategoryFilterState extends State<CategoryFilter> {
                             context: context,
                             builder: (BuildContext context) {
                               return SubCategoryFilter(
-                                  title: widget.categorys[index].title,
-                                  subcategorys:
-                                      widget.categorys[index].subcategorys);
+                                title: categorys.elementAt(index),
+                                mainCategory: widget.mainCategory,
+                                category: categorys.elementAt(index),
+                              );
                             });
                       },
                       child: Padding(
@@ -88,7 +90,7 @@ class _CategoryFilterState extends State<CategoryFilter> {
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        widget.categorys[index].title,
+                                        categorys.elementAt(index),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge!

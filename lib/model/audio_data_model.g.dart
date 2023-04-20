@@ -1,35 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'audio_files_model.dart';
+part of 'audio_data_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AudioFilesAdapter extends TypeAdapter<AudioFiles> {
+class AudioDataAdapter extends TypeAdapter<AudioData> {
   @override
-  final int typeId = 4;
+  final int typeId = 0;
 
   @override
-  AudioFiles read(BinaryReader reader) {
+  AudioData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AudioFiles(
+    return AudioData(
       name: fields[0] as String,
       title: fields[1] as String,
       length: fields[2] as String,
-      onlineUrl: fields[3] as String?,
+      mainCategoryTitle: fields[6] as String,
+      categoryTitle: fields[7] as String,
+      subcategoryTitle: fields[8] as String,
+      subcategoryDescription: fields[9] as String,
+      lessonTitle: fields[10] as String,
     )
+      ..onlineUrl = fields[3] as String?
       ..isAvilableOffline = fields[4] as bool?
-      ..offlineFilePath = fields[5] as String?;
+      ..offlineFilePath = fields[5] as String?
+      ..isFav = fields[11] as bool?;
   }
 
   @override
-  void write(BinaryWriter writer, AudioFiles obj) {
+  void write(BinaryWriter writer, AudioData obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -41,7 +47,19 @@ class AudioFilesAdapter extends TypeAdapter<AudioFiles> {
       ..writeByte(4)
       ..write(obj.isAvilableOffline)
       ..writeByte(5)
-      ..write(obj.offlineFilePath);
+      ..write(obj.offlineFilePath)
+      ..writeByte(6)
+      ..write(obj.mainCategoryTitle)
+      ..writeByte(7)
+      ..write(obj.categoryTitle)
+      ..writeByte(8)
+      ..write(obj.subcategoryTitle)
+      ..writeByte(9)
+      ..write(obj.subcategoryDescription)
+      ..writeByte(10)
+      ..write(obj.lessonTitle)
+      ..writeByte(11)
+      ..write(obj.isFav);
   }
 
   @override
@@ -50,7 +68,7 @@ class AudioFilesAdapter extends TypeAdapter<AudioFiles> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AudioFilesAdapter &&
+      other is AudioDataAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

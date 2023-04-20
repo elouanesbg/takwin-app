@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:takwin/model/subcategory_model.dart';
+import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/lesson/lesson_page.dart';
 
-class LessonHomePage extends StatelessWidget {
-  final Subcategory subcategory;
-  const LessonHomePage({super.key, required this.subcategory});
+class LessonHomePage extends StatefulWidget {
+  final String mainCategory;
+  final String category;
+  final String subcategory;
+  const LessonHomePage({
+    super.key,
+    required this.mainCategory,
+    required this.category,
+    required this.subcategory,
+  });
+
+  @override
+  State<LessonHomePage> createState() => _LessonHomePageState();
+}
+
+class _LessonHomePageState extends State<LessonHomePage> {
+  late Set<String> lessons;
+  @override
+  void initState() {
+    lessons = DataService()
+        .getLesson(widget.mainCategory, widget.category, widget.subcategory);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +46,7 @@ class LessonHomePage extends StatelessWidget {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
-            title: Text(subcategory.title),
+            title: Text(widget.subcategory),
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -40,7 +61,7 @@ class LessonHomePage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      subcategory.description,
+                      "widget.subcategory.description",
                       textAlign: TextAlign.justify,
                       style: Theme.of(context)
                           .textTheme
@@ -51,7 +72,7 @@ class LessonHomePage extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  subcategory.lessons.isEmpty
+                  lessons.isEmpty
                       ? Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 20.0),
@@ -87,7 +108,7 @@ class LessonHomePage extends StatelessWidget {
                           ),
                         )
                       : ListView.builder(
-                          itemCount: subcategory.lessons.length,
+                          itemCount: lessons.length,
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
                           physics: const ClampingScrollPhysics(),
@@ -97,7 +118,10 @@ class LessonHomePage extends StatelessWidget {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (_) => LessonPage(
-                                      lesson: subcategory.lessons[index],
+                                      mainCategory: widget.mainCategory,
+                                      category: widget.category,
+                                      subcategory: widget.subcategory,
+                                      lesson: lessons.elementAt(index),
                                     ),
                                   ),
                                 );
@@ -129,8 +153,7 @@ class LessonHomePage extends StatelessWidget {
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Text(
-                                                subcategory
-                                                    .lessons[index].title,
+                                                lessons.elementAt(index),
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyLarge!

@@ -1,97 +1,40 @@
 import 'dart:developer';
 import 'dart:io';
 // ignore: depend_on_referenced_packages
+import 'package:flutter_downloader/flutter_downloader.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:takwin/model/audio_files_model.dart';
+import 'package:takwin/model/audio_data_model.dart';
 import 'package:uuid/uuid.dart';
 
-class LessonPageTile extends StatefulWidget {
-  final DownloadTaskStatus status;
+class LessonPageTile extends StatefulWidget with WidgetsBindingObserver {
   final bool isPlay;
-  final AudioFiles audioFile;
+  final AudioData audioFile;
   final AudioPlayer player;
   final int playIndex;
-  final String audioUrl;
-  const LessonPageTile(
-      {super.key,
-      required this.audioFile,
-      required this.status,
-      required this.isPlay,
-      required this.player,
-      required this.playIndex,
-      required this.audioUrl});
+  const LessonPageTile({
+    super.key,
+    required this.audioFile,
+    required this.isPlay,
+    required this.player,
+    required this.playIndex,
+  });
 
   @override
   State<LessonPageTile> createState() => _LessonPageTileState();
 }
 
 class _LessonPageTileState extends State<LessonPageTile> {
-  Future<void> requestDownload(String url) async {
-    final status = await Permission.storage.request();
-    if (status.isGranted) {
-      //create file name
-      final extension = path.extension(url);
-      Uuid uuid = const Uuid();
-      String name = '${uuid.v1()}$extension';
-      final dir =
-          await getApplicationDocumentsDirectory(); //From path_provider package
-      var localPath = dir.path + name;
-      final savedDir = Directory(localPath);
-      await savedDir.create(recursive: true).then((value) async {
-        await FlutterDownloader.enqueue(
-          url: url,
-          fileName: name,
-          savedDir: localPath,
-          showNotification: true,
-          openFileFromNotification: false,
-        );
-      });
-    } else {
-      log("permission not granted...");
-    }
+  @override
+  void initState() {
+    super.initState();
   }
 
-  Icon downloadStatus(DownloadTaskStatus status) {
-    return status == DownloadTaskStatus.undefined
-        ? const Icon(
-            Icons.download,
-            color: Colors.white,
-          )
-        : status == DownloadTaskStatus.canceled
-            ? const Icon(
-                Icons.cancel,
-                color: Colors.white,
-              )
-            : status == DownloadTaskStatus.complete
-                ? const Icon(
-                    Icons.download_done,
-                    color: Colors.white,
-                  )
-                : status == DownloadTaskStatus.failed
-                    ? const Icon(
-                        Icons.error,
-                        color: Colors.white,
-                      )
-                    : status == DownloadTaskStatus.paused
-                        ? const Icon(
-                            Icons.pause,
-                            color: Colors.white,
-                          )
-                        : status == DownloadTaskStatus.running
-                            ? const Icon(
-                                Icons.downloading,
-                                color: Colors.white,
-                              )
-                            : const Icon(
-                                Icons.query_builder,
-                                color: Colors.white,
-                              );
-  }
+  bool isDownloding = false;
 
   @override
   Widget build(BuildContext context) {
@@ -116,12 +59,43 @@ class _LessonPageTileState extends State<LessonPageTile> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: () {
-                    requestDownload(widget.audioUrl);
+                  onPressed: () async {
+                    if (!widget.audioFile.isAvilableOffline!) {
+                      final status = await Permission.storage.request();
+                      if (status.isGranted) {
+                        final String url = widget.audioFile.onlineUrl!;
+                        //create file name
+                        final extension = path.extension(url);
+                        Uuid uuid = const Uuid();
+                        String filename = '${uuid.v1()}$extension';
+                        Directory appDocDir =
+                            await getApplicationDocumentsDirectory();
+                        await FlutterDownloader.enqueue(
+                          url: url,
+                          fileName: filename,
+                          headers: {}, // optional: header send with url (auth token etc)
+                          savedDir: appDocDir.path,
+                          showNotification:
+                              true, // show download progress in status bar (for Android)
+                          openFileFromNotification:
+                              false, // click on notification to open downloaded file (for Android)
+                        );
+                        setState(() {
+                          isDownloding = true;
+                        });
+                      }
+                    }
                   },
-                  icon: downloadStatus(
-                    widget.status,
-                  ),
+                  // ignore: unnecessary_null_comparison
+                  icon: isDownloding
+                      ? const Icon(
+                          Icons.download_done,
+                          color: Colors.white,
+                        )
+                      : const Icon(
+                          Icons.downloading,
+                          color: Colors.white,
+                        ),
                 ),
                 Flexible(
                   child: Text(
@@ -152,6 +126,7 @@ class _LessonPageTileState extends State<LessonPageTile> {
             ),
           ),
         ),
+
         const SizedBox(
           height: 10,
         ),

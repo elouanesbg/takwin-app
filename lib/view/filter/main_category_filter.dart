@@ -1,9 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:takwin/model/main_category_model.dart';
+import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/filter/category_filter.dart';
 
 class MainCategoryFilter extends StatefulWidget {
@@ -14,16 +10,15 @@ class MainCategoryFilter extends StatefulWidget {
 }
 
 class _MainCategoryFilterState extends State<MainCategoryFilter> {
-  late Box<MainCategory> mainCategoryBox;
+  late Set<String> mainCategory;
   @override
   void initState() {
-    mainCategoryBox = Hive.box<MainCategory>('takwinData');
+    mainCategory = DataService().getMainCategory();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    log("hive: ${mainCategoryBox.getAt(0)!.title}");
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
@@ -49,7 +44,7 @@ class _MainCategoryFilterState extends State<MainCategoryFilter> {
                 8,
               ),
               child: ListView.builder(
-                itemCount: mainCategoryBox.length,
+                itemCount: mainCategory.length,
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 physics: const ClampingScrollPhysics(),
@@ -60,10 +55,7 @@ class _MainCategoryFilterState extends State<MainCategoryFilter> {
                           context: context,
                           builder: (BuildContext context) {
                             return CategoryFilter(
-                              index: index,
-                              title: mainCategoryBox.getAt(index)!.title,
-                              categorys:
-                                  mainCategoryBox.getAt(index)!.categorys,
+                              mainCategory: mainCategory.elementAt(index),
                             );
                           });
                     },
@@ -91,7 +83,7 @@ class _MainCategoryFilterState extends State<MainCategoryFilter> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      mainCategoryBox.getAt(index)!.title,
+                                      mainCategory.elementAt(index),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!

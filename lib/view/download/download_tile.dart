@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:takwin/view/download/download_status_icon.dart';
+import 'package:takwin/model/audio_data_model.dart';
+import 'package:takwin/model/download_data_model.dart';
 
 class DownloadTile extends StatelessWidget {
-  final DownloadTask task;
-  final Function(DownloadTask)? onActionTap;
-  const DownloadTile(
-      {super.key, required this.task, required this.onActionTap});
+  final AudioData audioData;
+  final DownloadDataModel downloadModel;
+  const DownloadTile({
+    super.key,
+    required this.audioData,
+    required this.downloadModel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,10 @@ class DownloadTile extends StatelessWidget {
                   ).withOpacity(0.4),
                   width: 40,
                   height: 40,
-                  child: DownloadStatusIcon(status: task.status),
+                  child: const Icon(
+                    Icons.cancel,
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -39,45 +45,16 @@ class DownloadTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("${task.filename}"),
+                      Text(audioData.subcategoryTitle),
+                      Text(audioData.lessonTitle),
+                      Text(audioData.title),
                     ],
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: IconButton(
-                    onPressed: () {
-                      onActionTap?.call(task);
-                      FlutterDownloader.pause(taskId: task.taskId);
-                    },
-                    icon: const Icon(
-                      Icons.pause,
-                      color: Color(
-                        0xFF2C5F2D,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: IconButton(
-                    onPressed: () {
-                      FlutterDownloader.resume(taskId: task.taskId);
-                    },
-                    icon: const Icon(
-                      Icons.play_arrow,
-                      color: Color(
-                        0xFF2C5F2D,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: IconButton(
-                    onPressed: () async {
-                      FlutterDownloader.remove(taskId: task.taskId);
-                    },
+                    onPressed: () async {},
                     icon: const Icon(
                       Icons.cancel,
                       color: Color(
@@ -96,7 +73,7 @@ class DownloadTile extends StatelessWidget {
                   color: Colors.red,
                   backgroundColor: const Color(0xFF2C5F2D),
                   minHeight: 8,
-                  value: task.progress / 100,
+                  value: downloadModel.progress! / 100,
                 ),
               ),
             ],

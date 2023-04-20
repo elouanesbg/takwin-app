@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:takwin/model/subcategory_model.dart';
+import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/lesson/lessons_list_page.dart';
 
-class SubCategoryFilter extends StatelessWidget {
+class SubCategoryFilter extends StatefulWidget {
   final String title;
-  final List<Subcategory> subcategorys;
-  const SubCategoryFilter(
-      {super.key, required this.subcategorys, required this.title});
+  final String mainCategory;
+  final String category;
+  const SubCategoryFilter({
+    super.key,
+    required this.title,
+    required this.mainCategory,
+    required this.category,
+  });
+
+  @override
+  State<SubCategoryFilter> createState() => _SubCategoryFilterState();
+}
+
+class _SubCategoryFilterState extends State<SubCategoryFilter> {
+  late Set<String> subcategorys;
+  @override
+  void initState() {
+    subcategorys =
+        DataService().getSubCategory(widget.mainCategory, widget.category);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +45,7 @@ class SubCategoryFilter extends StatelessWidget {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
-            title: Text(title),
+            title: Text(widget.title),
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -45,7 +63,10 @@ class SubCategoryFilter extends StatelessWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => LessonHomePage(
-                                subcategory: subcategorys[index]),
+                              mainCategory: widget.mainCategory,
+                              category: widget.category,
+                              subcategory: subcategorys.elementAt(index),
+                            ),
                           ),
                         );
                       },
@@ -77,7 +98,7 @@ class SubCategoryFilter extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        subcategorys[index].title,
+                                        subcategorys.elementAt(index),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge!
