@@ -25,8 +25,8 @@ class AudioDataAdapter extends TypeAdapter<AudioData> {
       subcategoryTitle: fields[8] as String,
       subcategoryDescription: fields[9] as String,
       lessonTitle: fields[10] as String,
+      onlineUrl: fields[3] as String?,
     )
-      ..onlineUrl = fields[3] as String?
       ..isAvilableOffline = fields[4] as bool?
       ..offlineFilePath = fields[5] as String?
       ..isFav = fields[11] as bool?;

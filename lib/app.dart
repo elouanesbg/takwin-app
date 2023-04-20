@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:takwin/controller/download_controller.dart';
+import 'package:takwin/controller/fav_controller.dart';
 import 'package:takwin/main_app_bar.dart';
-import 'package:takwin/model/download_data_model.dart';
 import 'package:takwin/view/about/about_page.dart';
 import 'package:takwin/view/download/download_task_list.dart';
 import 'package:takwin/view/favorite/favorite_page.dart';
@@ -22,6 +22,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final downloadController = Get.put(DownloadController());
+  final favController = Get.put(FavController());
   var _currentIndex = 0;
   // ignore: prefer_final_fields
   ReceivePort _port = ReceivePort();
@@ -53,11 +54,11 @@ class _AppState extends State<App> {
       final status = DownloadTaskStatus(data[1] as int);
       final progress = data[2] as int;
 
-      downloadController.updateTask(DownloadDataModel(
-        taskId: taskId,
-        status: status,
-        progress: progress,
-      ));
+      downloadController.updateTask(
+        taskId,
+        status,
+        progress,
+      );
     });
   }
 
@@ -95,7 +96,7 @@ class _AppState extends State<App> {
           body: Column(
             children: [
               if (_currentIndex == 0) const HomePage(),
-              if (_currentIndex == 1) const FavoritePage(),
+              if (_currentIndex == 1) FavoritePage(),
               if (_currentIndex == 2) const OfflineDownloads(),
               if (_currentIndex == 3) AboutPage(),
             ],

@@ -58,4 +58,12 @@ class AudioData extends HiveObject {
         "length": length,
         "mainCategoryTitle": mainCategoryTitle,
       };
+
+  @override
+  int get hashCode => onlineUrl.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    return onlineUrl == (other as AudioData).onlineUrl;
+  }
 }

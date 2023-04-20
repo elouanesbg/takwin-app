@@ -56,8 +56,6 @@ class DataService {
             .removeWhere((element) => element.subcategorys.isEmpty);
       }
 
-      var box = await Hive.openBox<AudioData>('takwinData');
-
       for (MainCategory mainCategory in data) {
         final String mainCategoryTitle = mainCategory.title;
         for (Category category in mainCategory.categorys) {
@@ -79,7 +77,8 @@ class DataService {
                   lessonTitle: lessonTitle,
                   onlineUrl: audioFiles.onlineUrl,
                 );
-                box.put(audioFile.onlineUrl, audioFile);
+                await Hive.box<AudioData>('takwinData')
+                    .put(audioFile.onlineUrl, audioFile);
                 //log("audioFile.onlineUrl: ${audioFile.onlineUrl}");
                 //log("afterput length: ${box.values.length}");
               }
@@ -90,8 +89,6 @@ class DataService {
 
       prefs.setBool("isDataSetup", true);
     }
-    //await Hive.openBox<AudioFiles>('historyPlay');
-    //await Hive.openBox<AudioFiles>('favPlay');
   }
 
   Set<String> getMainCategory() {

@@ -46,7 +46,7 @@ class _OfflineDownloadsState extends State<OfflineDownloads> {
                   itemCount: controller.downloadModel.length,
                   itemBuilder: (context, index) {
                     AudioData metadata = DataService().getAudioFileFromUrl(
-                        controller.downloadModel[index].url!);
+                        controller.downloadModel[index].url);
                     return DownloadTile(
                         onTap: (taskId) {
                           _delete(taskId);

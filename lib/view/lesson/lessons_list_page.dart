@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:takwin/model/audio_metadata_model.dart';
 import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/lesson/lesson_page.dart';
 
@@ -58,7 +59,7 @@ class _LessonHomePageState extends State<LessonHomePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Padding(
+                  /* Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       "widget.subcategory.description",
@@ -68,7 +69,7 @@ class _LessonHomePageState extends State<LessonHomePage> {
                           .bodyLarge!
                           .copyWith(fontSize: 16),
                     ),
-                  ),
+                  ),*/
                   const SizedBox(
                     height: 10,
                   ),
@@ -118,10 +119,12 @@ class _LessonHomePageState extends State<LessonHomePage> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (_) => LessonPage(
-                                      mainCategory: widget.mainCategory,
-                                      category: widget.category,
-                                      subcategory: widget.subcategory,
-                                      lesson: lessons.elementAt(index),
+                                      audioMetadataModel: AudioMetadataModel(
+                                        mainCategoryTitle: widget.mainCategory,
+                                        categoryTitle: widget.category,
+                                        subCategoryTitle: widget.subcategory,
+                                        lessonTitle: lessons.elementAt(index),
+                                      ),
                                     ),
                                   ),
                                 );

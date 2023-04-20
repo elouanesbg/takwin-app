@@ -31,22 +31,14 @@ class DownloadController extends GetxController {
     downloadModel.value = list;
   }
 
-  getTaskByUrl(String url) {
-    try {
-      return downloadModel.firstWhere((element) => element.url == url);
-    } catch (e) {
-      return DownloadDataModel();
-    }
-  }
-
-  updateTask(DownloadDataModel downloadDataModel) async {
-    int index = downloadModel.indexWhere(
-        (element) => element.taskId == downloadDataModel.taskId, -1);
+  updateTask(String taskId, DownloadTaskStatus status, int progress) async {
+    int index =
+        downloadModel.indexWhere((element) => element.taskId == taskId, -1);
     log("updateTask index: $index");
     if (index == -1) {
       var listTasks = await FlutterDownloader.loadTasks();
-      DownloadTask task = listTasks!
-          .firstWhere((element) => element.taskId == downloadDataModel.taskId);
+      DownloadTask task =
+          listTasks!.firstWhere((element) => element.taskId == taskId);
       log("getting task: ${task.url}");
       downloadModel.add(
         DownloadDataModel(
@@ -57,7 +49,12 @@ class DownloadController extends GetxController {
         ),
       );
     } else {
-      downloadModel[index] = downloadDataModel;
+      DownloadDataModel model = DownloadDataModel(
+          url: downloadModel[index].url,
+          status: status,
+          progress: progress,
+          taskId: taskId);
+      downloadModel[index] = model;
     }
   }
 }

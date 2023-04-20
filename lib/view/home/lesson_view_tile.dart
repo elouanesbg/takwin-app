@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:takwin/model/audio_metadata_model.dart';
 import 'package:takwin/view/lesson/lesson_page.dart';
 
 class LessonViewTile extends StatelessWidget {
@@ -20,10 +21,12 @@ class LessonViewTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => LessonPage(
-            mainCategory: mainCategory,
-            category: category,
-            subcategory: subcategory,
-            lesson: lesson,
+            audioMetadataModel: AudioMetadataModel(
+              mainCategoryTitle: mainCategory,
+              categoryTitle: category,
+              subCategoryTitle: subcategory,
+              lessonTitle: lesson,
+            ),
           ),
         ),
       ),

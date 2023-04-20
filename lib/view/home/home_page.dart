@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:takwin/model/audio_data_model.dart';
+import 'package:takwin/model/audio_metadata_model.dart';
 import 'package:takwin/view/filter/main_category_filter.dart';
 import 'package:takwin/view/home/lesson_view_tile.dart';
 import 'package:takwin/view/lesson/lesson_page.dart';
@@ -149,10 +150,12 @@ class AudioViewTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => LessonPage(
-            mainCategory: randomLesson["mainCategory"],
-            category: randomLesson["category"],
-            subcategory: randomLesson["subcategory"],
-            lesson: randomLesson["lesson"],
+            audioMetadataModel: AudioMetadataModel(
+              mainCategoryTitle: randomLesson["mainCategory"],
+              categoryTitle: randomLesson["category"],
+              subCategoryTitle: randomLesson["subcategory"],
+              lessonTitle: randomLesson["lesson"],
+            ),
           ),
         ),
       ),

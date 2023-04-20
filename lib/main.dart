@@ -4,6 +4,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:takwin/app.dart';
 import 'package:takwin/model/audio_data_model.dart';
+import 'package:takwin/model/audio_metadata_model.dart';
 import 'package:takwin/service/data_service.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 
@@ -22,13 +23,21 @@ void main() async {
           true // option: set to false to disable working with http links (default: false)
       );
 
-  Hive.registerAdapter(AudioDataAdapter());
   runApp(const MyApp());
 }
 
 Future _initHive() async {
   var dir = await getApplicationDocumentsDirectory();
   Hive.init(dir.path);
+  if (!Hive.isAdapterRegistered(0)) {
+    Hive.registerAdapter(AudioDataAdapter());
+  }
+  if (!Hive.isAdapterRegistered(1)) {
+    Hive.registerAdapter(AudioMetadataModelAdapter());
+  }
+  await Hive.openBox<AudioData>('takwinData');
+  await Hive.openBox<AudioMetadataModel>('historyData');
+  await Hive.openBox<AudioMetadataModel>('favData');
   await DataService().getData();
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:takwin/model/audio_data_model.dart';
 import 'package:takwin/model/download_data_model.dart';
 
+// ignore: must_be_immutable
 class DownloadTile extends StatelessWidget {
   final AudioData audioData;
   final DownloadDataModel downloadModel;

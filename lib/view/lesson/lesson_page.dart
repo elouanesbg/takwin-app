@@ -2,11 +2,14 @@ import 'dart:developer';
 // ignore: depend_on_referenced_packages
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:rxdart/rxdart.dart' as rx;
+import 'package:takwin/controller/fav_controller.dart';
 import 'package:takwin/model/audio_data_model.dart';
+import 'package:takwin/model/audio_metadata_model.dart';
 import 'package:takwin/service/data_service.dart';
 import 'package:takwin/view/lesson/audio_controler.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
@@ -15,16 +18,10 @@ import 'package:takwin/view/lesson/lesson_page_tile.dart';
 // ignore: depend_on_referenced_packages
 
 class LessonPage extends StatefulWidget {
-  final String mainCategory;
-  final String category;
-  final String subcategory;
-  final String lesson;
+  final AudioMetadataModel audioMetadataModel;
   const LessonPage({
     super.key,
-    required this.mainCategory,
-    required this.category,
-    required this.subcategory,
-    required this.lesson,
+    required this.audioMetadataModel,
   });
 
   @override
@@ -34,6 +31,7 @@ class LessonPage extends StatefulWidget {
 class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   late AudioPlayer _player;
   late ConcatenatingAudioSource _playList;
+  FavController favController = Get.find();
 
   late List<AudioData> audioFiles;
 
@@ -67,7 +65,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   }
 
   Stream<PositionData> get _positionDataStream =>
-      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+      rx.Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
           _player.positionStream,
           _player.bufferedPositionStream,
           _player.durationStream,
@@ -77,10 +75,10 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     audioFiles = DataService().getAudioFiles(
-      widget.mainCategory,
-      widget.category,
-      widget.subcategory,
-      widget.lesson,
+      widget.audioMetadataModel.mainCategoryTitle!,
+      widget.audioMetadataModel.categoryTitle!,
+      widget.audioMetadataModel.subCategoryTitle!,
+      widget.audioMetadataModel.lessonTitle!,
     );
     _player = AudioPlayer();
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -214,19 +212,19 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
       actions: [
         IconButton(
           onPressed: () {
-            /* if (Provider.of<UserData>(context, listen: false)
-                .isFvLesson(audioFiles.first.isAvilableOffline)) {
-              context.read<UserData>().deleteContact(widget.lesson.key);
+            bool isFav = favController.isFav(widget.audioMetadataModel);
+            if (isFav) {
+              favController.removeFromFav(widget.audioMetadataModel);
             } else {
-              context.read<UserData>().addLesson(widget.lesson);
-            }*/
+              favController.addToFav(widget.audioMetadataModel);
+            }
+            setState(() {});
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.favorite,
-            /*color: context.watch<UserData>().isFvLesson(widget.lesson.url)
+            color: favController.isFav(widget.audioMetadataModel)
                 ? Colors.red
-                : Colors.white,*/
-            color: Colors.white,
+                : Colors.white,
           ),
         ),
       ],
