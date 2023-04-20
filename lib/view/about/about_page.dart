@@ -72,7 +72,7 @@ class AboutPage extends StatelessWidget {
                 textDirection: TextDirection.rtl,
               ),
               SelectableText(
-                "- جمع مادة المنهج، من متون ومنظومات وشروح وحواشٍ مكتوبة، وكذلك شروح صوتية ومرئية. (تنبيه: اجتهدنا في اختيار المادة الصوتية والمرئية التي وضعناها، وما زلنا نحرر وننقح).",
+                "- جمع مادة المنهج، من متون ومنظومات وشروح وحواشٍ مكتوبة، وكذلك شروح صوتية ومرئية. ",
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.normal,
                       fontSize: 18,

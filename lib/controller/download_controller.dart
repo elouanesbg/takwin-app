@@ -1,7 +1,4 @@
 import 'dart:developer';
-import 'dart:isolate';
-import 'dart:ui';
-
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:takwin/model/download_data_model.dart';

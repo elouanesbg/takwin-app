@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
 import 'package:takwin/controller/download_controller.dart';
 import 'package:takwin/model/audio_data_model.dart';
 import 'package:takwin/service/data_service.dart';
