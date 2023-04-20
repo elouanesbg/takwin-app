@@ -60,7 +60,7 @@ class _LessonPageTileState extends State<LessonPageTile> {
               children: [
                 IconButton(
                   onPressed: () async {
-                    if (!widget.audioFile.isAvilableOffline!) {
+                    if (!widget.audioFile.isAvilableOffline! && !isDownloding) {
                       final status = await Permission.storage.request();
                       if (status.isGranted) {
                         final String url = widget.audioFile.onlineUrl!;
@@ -89,11 +89,11 @@ class _LessonPageTileState extends State<LessonPageTile> {
                   // ignore: unnecessary_null_comparison
                   icon: isDownloding
                       ? const Icon(
-                          Icons.download_done,
+                          Icons.downloading,
                           color: Colors.white,
                         )
                       : const Icon(
-                          Icons.downloading,
+                          Icons.download,
                           color: Colors.white,
                         ),
                 ),

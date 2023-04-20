@@ -146,7 +146,7 @@ class DataService {
     return data;
   }
 
-  AudioData getAudioFileFromUrl(String url) {
+  AudioData getAudioFileFromUrl(String? url) {
     return Hive.box<AudioData>('takwinData')
         .values
         .firstWhere((element) => element.onlineUrl == url);

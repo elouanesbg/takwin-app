@@ -1,15 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:takwin/model/audio_data_model.dart';
 import 'package:takwin/model/download_data_model.dart';
 
 class DownloadTile extends StatelessWidget {
   final AudioData audioData;
   final DownloadDataModel downloadModel;
-  const DownloadTile({
+  Function(String) onTap;
+  DownloadTile({
     super.key,
     required this.audioData,
     required this.downloadModel,
+    required this.onTap,
   });
+
+  Icon getIcon() {
+    return downloadModel.status == DownloadTaskStatus.undefined
+        ? const Icon(
+            Icons.warning,
+            color: Colors.white,
+          )
+        : downloadModel.status == DownloadTaskStatus.complete
+            ? const Icon(
+                Icons.download_done,
+                color: Colors.white,
+              )
+            : downloadModel.status == DownloadTaskStatus.running
+                ? const Icon(
+                    Icons.downloading,
+                    color: Colors.white,
+                  )
+                : downloadModel.status == DownloadTaskStatus.enqueued
+                    ? const Icon(
+                        Icons.punch_clock,
+                        color: Colors.white,
+                      )
+                    : downloadModel.status == DownloadTaskStatus.failed
+                        ? const Icon(
+                            Icons.error,
+                            color: Colors.white,
+                          )
+                        : const Icon(
+                            Icons.download,
+                            color: Colors.white,
+                          );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +64,12 @@ class DownloadTile extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Container(
-                  color: const Color(
-                    0xFF2C5F2D,
-                  ).withOpacity(0.4),
-                  width: 40,
-                  height: 40,
-                  child: const Icon(
-                    Icons.cancel,
-                    color: Colors.white,
-                  ),
-                ),
+                    color: const Color(
+                      0xFF2C5F2D,
+                    ).withOpacity(0.4),
+                    width: 40,
+                    height: 40,
+                    child: getIcon()),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -54,7 +85,9 @@ class DownloadTile extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: IconButton(
-                    onPressed: () async {},
+                    onPressed: () async {
+                      onTap(downloadModel.taskId!);
+                    },
                     icon: const Icon(
                       Icons.cancel,
                       color: Color(
