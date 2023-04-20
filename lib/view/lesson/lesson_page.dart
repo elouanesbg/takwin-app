@@ -8,6 +8,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:takwin/controller/fav_controller.dart';
+import 'package:takwin/controller/history_controller.dart';
 import 'package:takwin/model/audio_data_model.dart';
 import 'package:takwin/model/audio_metadata_model.dart';
 import 'package:takwin/service/data_service.dart';
@@ -32,6 +33,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   late AudioPlayer _player;
   late ConcatenatingAudioSource _playList;
   FavController favController = Get.find();
+  HistoryController historyController = Get.find();
 
   late List<AudioData> audioFiles;
 
@@ -74,6 +76,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+
     audioFiles = DataService().getAudioFiles(
       widget.audioMetadataModel.mainCategoryTitle!,
       widget.audioMetadataModel.categoryTitle!,
@@ -86,6 +89,10 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
     ));
     _playList = ConcatenatingAudioSource(children: getPlayList());
     _init();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // executes after build
+      historyController.addToHistory(widget.audioMetadataModel);
+    });
   }
 
   @override

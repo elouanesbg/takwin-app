@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:takwin/controller/history_controller.dart';
 import 'package:takwin/model/audio_data_model.dart';
 import 'package:takwin/model/audio_metadata_model.dart';
 import 'package:takwin/view/filter/main_category_filter.dart';
@@ -17,6 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  HistoryController historyController = Get.find();
   late List<AudioData> takwinData = [];
   final _random = Random();
 
@@ -87,15 +90,19 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(
                           height: 20,
                         ),
-                        ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: 5,
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: (context, index) {
-                            final randomLesson = geRandomeLesson(5);
-                            return AudioViewTile(
-                              randomLesson: randomLesson[index],
+                        GetX<HistoryController>(
+                          builder: (controller) {
+                            return ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: controller.historyModel.length,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (context, index) {
+                                return AudioViewTile(
+                                  audioMetadataModel:
+                                      controller.historyModel[index],
+                                );
+                              },
                             );
                           },
                         ),
@@ -138,11 +145,11 @@ class _HomePageState extends State<HomePage> {
 class AudioViewTile extends StatelessWidget {
   const AudioViewTile({
     super.key,
-    required this.randomLesson,
+    required this.audioMetadataModel,
   });
 
   // ignore: prefer_typing_uninitialized_variables
-  final randomLesson;
+  final AudioMetadataModel audioMetadataModel;
 
   @override
   Widget build(BuildContext context) {
@@ -150,12 +157,7 @@ class AudioViewTile extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => LessonPage(
-            audioMetadataModel: AudioMetadataModel(
-              mainCategoryTitle: randomLesson["mainCategory"],
-              categoryTitle: randomLesson["category"],
-              subCategoryTitle: randomLesson["subcategory"],
-              lessonTitle: randomLesson["lesson"],
-            ),
+            audioMetadataModel: audioMetadataModel,
           ),
         ),
       ),
@@ -185,7 +187,7 @@ class AudioViewTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        randomLesson["subcategory"],
+                        audioMetadataModel.subCategoryTitle!,
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               color: Colors.white,
                               fontSize: 16,
@@ -193,7 +195,7 @@ class AudioViewTile extends StatelessWidget {
                             ),
                       ),
                       Text(
-                        randomLesson["lesson"],
+                        audioMetadataModel.lessonTitle!,
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               fontSize: 14,
                               color: Colors.white,

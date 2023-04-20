@@ -6,6 +6,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:takwin/controller/download_controller.dart';
 import 'package:takwin/controller/fav_controller.dart';
+import 'package:takwin/controller/history_controller.dart';
 import 'package:takwin/main_app_bar.dart';
 import 'package:takwin/view/about/about_page.dart';
 import 'package:takwin/view/download/download_task_list.dart';
@@ -23,6 +24,7 @@ class _AppState extends State<App> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final downloadController = Get.put(DownloadController());
   final favController = Get.put(FavController());
+  final historyController = Get.put(HistoryController());
   var _currentIndex = 0;
   // ignore: prefer_final_fields
   ReceivePort _port = ReceivePort();
