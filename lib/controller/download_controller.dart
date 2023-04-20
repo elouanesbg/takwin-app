@@ -60,6 +60,4 @@ class DownloadController extends GetxController {
       downloadModel[index] = downloadDataModel;
     }
   }
-
-///////////////isolate/////////////////////////////////////////
 }

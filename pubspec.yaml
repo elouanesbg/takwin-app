@@ -12,8 +12,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   url_launcher: ^6.1.10
   shared_preferences: ^2.1.0
-  salomon_bottom_bar: ^3.3.2
-  http: ^0.13.5
   just_audio: ^0.9.32
   audio_video_progress_bar: ^1.0.1
   just_audio_background: ^0.0.1-beta.9
@@ -24,13 +22,8 @@ dependencies:
   build_runner: ^2.3.3
   hive_generator: ^2.0.0
   internet_connection_checker: ^1.0.0+1
-  just_audio_windows: ^0.2.0
   uuid: ^3.0.7
-  #flutter_downloader: ^1.10.2
   permission_handler: ^10.2.0
-  android_path_provider: ^0.3.0
-  device_info_plus: ^8.2.0
-  flutter_file_downloader: ^1.1.2
   flutter_downloader: ^1.10.2
   get: ^4.6.5
 
@@ -40,6 +33,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.12.0
   flutter_native_splash: ^2.2.19
   flutter_lints: ^2.0.0
+  dependency_validator: ^3.0.0
 flutter_icons:
   android: "launcher_icon"
   ios: true
