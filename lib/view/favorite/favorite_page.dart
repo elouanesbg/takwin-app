@@ -14,9 +14,7 @@ class FavoritePage extends StatelessWidget {
         return controller.favModel.isEmpty
             ? const Expanded(
                 child: Center(
-                  child: Text(
-                    "...",
-                  ),
+                  child: Text("لا يوجد دروس محفوظة"),
                 ),
               )
             : Expanded(

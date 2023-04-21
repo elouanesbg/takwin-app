@@ -44,7 +44,6 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
     List<AudioSource> list = [];
     int i = 0;
     for (var element in audioFiles) {
-      Uri url = Uri.parse("${element.onlineUrl}");
       if (element.isAvilableOffline!) {
         list.add(AudioSource.asset(element.offlineFilePath!,
             tag: MediaItem(
@@ -53,6 +52,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
               artist: element.lessonTitle,
             )));
       } else {
+        Uri url = Uri.parse("${element.onlineUrl}");
         list.add(AudioSource.uri(url,
             tag: MediaItem(
               id: "$i",
@@ -208,7 +208,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
     return AppBar(
       backgroundColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => Navigator.pop(context, false),
+        onPressed: () => Navigator.pop(context),
         icon: const Icon(
           Icons.cancel,
           color: Colors.white,

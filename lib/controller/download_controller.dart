@@ -1,6 +1,7 @@
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:takwin/model/download_data_model.dart';
+import 'package:takwin/service/data_service.dart';
 
 class DownloadController extends GetxController {
   var downloadModel = <DownloadDataModel>[].obs;
@@ -29,6 +30,19 @@ class DownloadController extends GetxController {
     downloadModel.value = list;
   }
 
+  updateToffline(String taskid) async {
+    var data = await FlutterDownloader.loadTasksWithRawQuery(
+        query: "SELECT * FROM task WHERE task_id='$taskid'");
+    if (data!.isNotEmpty) {
+      var task = data.first;
+      final String saveDir = task.savedDir;
+      final String? filename = task.filename;
+      final String url = task.url;
+
+      DataService().updateAudioFileToOffline(url, "$saveDir/$filename");
+    }
+  }
+
   updateTask(String taskId, DownloadTaskStatus status, int progress) async {
     int index =
         downloadModel.indexWhere((element) => element.taskId == taskId, -1);
@@ -46,11 +60,15 @@ class DownloadController extends GetxController {
       );
     } else {
       DownloadDataModel model = DownloadDataModel(
-          url: downloadModel[index].url,
-          status: status,
-          progress: progress,
-          taskId: taskId);
+        url: downloadModel[index].url,
+        status: status,
+        progress: progress,
+        taskId: taskId,
+      );
       downloadModel[index] = model;
+    }
+    if (status == DownloadTaskStatus.complete) {
+      await updateToffline(taskId);
     }
   }
 }

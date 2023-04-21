@@ -91,9 +91,7 @@ class DownloadTile extends StatelessWidget {
                     },
                     icon: const Icon(
                       Icons.delete,
-                      color: Color(
-                        0xFF2C5F2D,
-                      ),
+                      color: Colors.red,
                     ),
                   ),
                 ),

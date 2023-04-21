@@ -142,6 +142,15 @@ class DataService {
         .values
         .firstWhere((element) => element.onlineUrl == url);
   }
+
+  void updateAudioFileToOffline(String url, String path) async {
+    var data = Hive.box<AudioData>('takwinData')
+        .values
+        .firstWhere((element) => element.onlineUrl == url);
+    data.isAvilableOffline = true;
+    data.offlineFilePath = path;
+    await Hive.box<AudioData>('takwinData').put(data.key, data);
+  }
 /*
   AudioMetadata getAudioFileMetadata(String url) {
     try {

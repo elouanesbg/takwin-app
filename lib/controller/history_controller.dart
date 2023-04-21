@@ -12,9 +12,21 @@ class HistoryController extends GetxController {
     loadTask();
   }
 
+  deleteAll() {
+    var box = Hive.box<AudioMetadataModel>('historyData');
+    for (var element in box.values) {
+      box.delete(element.key);
+    }
+  }
+
   loadTask() {
     var box = Hive.box<AudioMetadataModel>('historyData');
-    historyModel.value = box.values.toList();
+
+    var data = box.values.toList();
+    data.sort((a, b) => a.key > b.key ? -1 : (a.key < b.key ? 1 : 0));
+
+    historyModel.value =
+        data.isNotEmpty && data.length > 5 ? data.sublist(0, 5) : data;
   }
 
   addToHistory(AudioMetadataModel model) {
