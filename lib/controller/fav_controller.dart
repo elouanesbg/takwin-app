@@ -22,7 +22,7 @@ class FavController extends GetxController {
         (element) => element.toJson() == model.toJson(), -1);
     if (index == -1) {
       var box = Hive.box<AudioMetadataModel>('favData');
-      box.put(model.hashCode, model);
+      box.put(model.hashCode, model.copy);
       loadTask();
     }
   }

@@ -90,7 +90,7 @@ class DownloadTile extends StatelessWidget {
                       onTap(downloadModel.taskId!);
                     },
                     icon: const Icon(
-                      Icons.cancel,
+                      Icons.delete,
                       color: Color(
                         0xFF2C5F2D,
                       ),

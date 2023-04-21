@@ -21,6 +21,17 @@ class AudioMetadataModel extends HiveObject {
     this.audioFileTitle,
   });
 
+  AudioMetadataModel get copy {
+    final objectInstance = AudioMetadataModel(
+      mainCategoryTitle: mainCategoryTitle,
+      categoryTitle: categoryTitle,
+      subCategoryTitle: subCategoryTitle,
+      lessonTitle: lessonTitle,
+      audioFileTitle: audioFileTitle,
+    );
+    return objectInstance;
+  }
+
   Map toJson() => {
         "mainCategoryTitle": mainCategoryTitle ?? "",
         "categoryTitle": categoryTitle ?? "",

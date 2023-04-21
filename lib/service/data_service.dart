@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +26,7 @@ class DataService {
       Hive.registerAdapter(AudioDataAdapter());
     }
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isDataSetup = false; //prefs.getBool("isDataSetup") ?? false;
+    bool isDataSetup = prefs.getBool("isDataSetup") ?? false;
     if (!isDataSetup) {
       List<MainCategory> data = await DataService().readJson();
       for (var element in data) {
@@ -39,7 +38,6 @@ class DataService {
               var url = element.url;
               for (var element in element.audioFiles) {
                 element.onlineUrl = "$url/${element.name}";
-                //log("element.onlineUrl: ${element.onlineUrl}");
               }
             }
           }
@@ -79,8 +77,6 @@ class DataService {
                 );
                 await Hive.box<AudioData>('takwinData')
                     .put(audioFile.onlineUrl, audioFile);
-                //log("audioFile.onlineUrl: ${audioFile.onlineUrl}");
-                //log("afterput length: ${box.values.length}");
               }
             }
           }
@@ -130,7 +126,6 @@ class DataService {
 
   List<AudioData> getAudioFiles(
       String mainCategory, String category, String subCategory, String lesson) {
-    log("getAudioFiles start");
     var data = Hive.box<AudioData>('takwinData')
         .values
         .where((element) =>
@@ -139,7 +134,6 @@ class DataService {
             element.subcategoryTitle == subCategory &&
             element.lessonTitle == lesson)
         .toList();
-    log("getAudioFiles end");
     return data;
   }
 

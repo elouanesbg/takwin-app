@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -110,7 +109,6 @@ class _LessonPageTileState extends State<LessonPageTile> {
                 ),
                 IconButton(
                   onPressed: () {
-                    log("play audio widget");
                     widget.player.seek(Duration.zero, index: widget.playIndex);
                     widget.player.play();
                   },

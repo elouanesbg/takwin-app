@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:takwin/model/download_data_model.dart';
@@ -8,7 +7,6 @@ class DownloadController extends GetxController {
 
   @override
   void onInit() {
-    log("onInit getx");
     super.onInit();
 
     loadTask();
@@ -34,12 +32,10 @@ class DownloadController extends GetxController {
   updateTask(String taskId, DownloadTaskStatus status, int progress) async {
     int index =
         downloadModel.indexWhere((element) => element.taskId == taskId, -1);
-    log("updateTask index: $index");
     if (index == -1) {
       var listTasks = await FlutterDownloader.loadTasks();
       DownloadTask task =
           listTasks!.firstWhere((element) => element.taskId == taskId);
-      log("getting task: ${task.url}");
       downloadModel.add(
         DownloadDataModel(
           url: task.url,

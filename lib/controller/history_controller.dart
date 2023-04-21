@@ -22,7 +22,8 @@ class HistoryController extends GetxController {
         (element) => element.toJson() == model.toJson(), -1);
     if (index == -1) {
       var box = Hive.box<AudioMetadataModel>('historyData');
-      box.put(model.hashCode, model);
+      int index = box.values.length;
+      box.put(index, model.copy);
       loadTask();
     }
   }
