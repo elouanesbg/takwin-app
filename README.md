@@ -1,16 +1,11 @@
-# takwin
+# شروح صوتية للعلوم الشرعية
 
-A new Flutter project.
+<p align="center">
+  <img src="assets\img\app-icon.png" width="85" title="hover text">
+</p>
 
-## Getting Started
+A Flutter Project Based on https://takw.in
 
-This project is a starting point for a Flutter application.
+## Screenshot
+<img src="screenshot/1682234250146.jpg" height="600em" /><img src="screenshot/1682234250133.jpg" height="600em" /><img src="screenshot/1682234250122.jpg" height="600em" /><img src="screenshot/1682234250112.jpg" height="600em" /><img src="screenshot/1682234250101.jpg" height="600em" /><img src="screenshot/1682234250093.jpg" height="600em" /><img src="screenshot/1682234250083.jpg" height="600em" />
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
