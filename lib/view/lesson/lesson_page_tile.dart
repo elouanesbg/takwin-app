@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'dart:io';
 // ignore: depend_on_referenced_packages
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
@@ -9,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:takwin/model/audio_data_model.dart';
 import 'package:uuid/uuid.dart';
+import 'package:android_path_provider/android_path_provider.dart';
 
 class LessonPageTile extends StatefulWidget with WidgetsBindingObserver {
   final bool isPlay;
@@ -28,12 +31,80 @@ class LessonPageTile extends StatefulWidget with WidgetsBindingObserver {
 }
 
 class _LessonPageTileState extends State<LessonPageTile> {
+  late String _localPath;
+  late bool _permissionReady;
+  late bool isDownloding;
   @override
   void initState() {
     super.initState();
+    _permissionReady = false;
+    isDownloding = false;
+    _retryRequestPermission();
   }
 
-  bool isDownloding = false;
+  Future<void> _retryRequestPermission() async {
+    final hasGranted = await _checkPermission();
+
+    if (hasGranted) {
+      await _prepareSaveDir();
+    }
+
+    setState(() {
+      _permissionReady = hasGranted;
+    });
+  }
+
+  Future<bool> _checkPermission() async {
+    if (Platform.isIOS) {
+      return true;
+    }
+
+    if (Platform.isAndroid) {
+      final info = await DeviceInfoPlugin().androidInfo;
+      if (info.version.sdkInt > 28) {
+        return true;
+      }
+
+      final status = await Permission.storage.status;
+      if (status == PermissionStatus.granted) {
+        return true;
+      }
+
+      final result = await Permission.storage.request();
+      return result == PermissionStatus.granted;
+    }
+
+    throw StateError('unknown platform');
+  }
+
+  Future<String?> _getSavedDir() async {
+    String? externalStorageDirPath;
+
+    if (Platform.isAndroid) {
+      try {
+        //externalStorageDirPath = await AndroidPathProvider.downloadsPath;
+        final directory = await getApplicationDocumentsDirectory();
+        externalStorageDirPath = directory.path;
+      } catch (err, st) {
+        log('failed to get downloads path: $err, $st');
+
+        final directory = await getExternalStorageDirectory();
+        externalStorageDirPath = directory?.path;
+      }
+    } else if (Platform.isIOS) {
+      externalStorageDirPath =
+          (await getApplicationDocumentsDirectory()).absolute.path;
+    }
+    return externalStorageDirPath;
+  }
+
+  Future<void> _prepareSaveDir() async {
+    _localPath = (await _getSavedDir())!;
+    final savedDir = Directory(_localPath);
+    if (!savedDir.existsSync()) {
+      await savedDir.create();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,30 +130,28 @@ class _LessonPageTileState extends State<LessonPageTile> {
               children: [
                 IconButton(
                   onPressed: () async {
-                    if (!widget.audioFile.isAvilableOffline! && !isDownloding) {
-                      final status = await Permission.storage.request();
-                      if (status.isGranted) {
-                        final String url = widget.audioFile.onlineUrl!;
-                        //create file name
-                        final extension = path.extension(url);
-                        Uuid uuid = const Uuid();
-                        String filename = '${uuid.v1()}$extension';
-                        Directory appDocDir =
-                            await getApplicationDocumentsDirectory();
-                        await FlutterDownloader.enqueue(
-                          url: url,
-                          fileName: filename,
-                          headers: {}, // optional: header send with url (auth token etc)
-                          savedDir: appDocDir.path,
-                          showNotification:
-                              true, // show download progress in status bar (for Android)
-                          openFileFromNotification:
-                              false, // click on notification to open downloaded file (for Android)
-                        );
-                        setState(() {
-                          isDownloding = true;
-                        });
-                      }
+                    if (!widget.audioFile.isAvilableOffline! &&
+                        !isDownloding &&
+                        _permissionReady) {
+                      final String url = widget.audioFile.onlineUrl!;
+                      //create file name
+                      final extension = path.extension(url);
+                      Uuid uuid = const Uuid();
+                      String filename = '${uuid.v1()}$extension';
+                      log("_localPath: $_localPath");
+                      await FlutterDownloader.enqueue(
+                        url: url,
+                        fileName: filename,
+                        headers: {}, // optional: header send with url (auth token etc)
+                        savedDir: _localPath,
+                        showNotification:
+                            true, // show download progress in status bar (for Android)
+                        openFileFromNotification:
+                            false, // click on notification to open downloaded file (for Android)
+                      );
+                      setState(() {
+                        isDownloding = true;
+                      });
                     }
                   },
                   // ignore: unnecessary_null_comparison

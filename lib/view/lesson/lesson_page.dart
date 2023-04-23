@@ -45,6 +45,7 @@ class _LessonPageState extends State<LessonPage> with WidgetsBindingObserver {
     int i = 0;
     for (var element in audioFiles) {
       if (element.isAvilableOffline!) {
+        log("offline path: ${element.offlineFilePath}");
         list.add(AudioSource.asset(element.offlineFilePath!,
             tag: MediaItem(
               id: "$i",

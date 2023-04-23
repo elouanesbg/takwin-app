@@ -26,7 +26,7 @@ class DataService {
       Hive.registerAdapter(AudioDataAdapter());
     }
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isDataSetup = prefs.getBool("isDataSetup") ?? false;
+    bool isDataSetup = false; //prefs.getBool("isDataSetup") ?? false;
     if (!isDataSetup) {
       List<MainCategory> data = await DataService().readJson();
       for (var element in data) {
@@ -53,7 +53,10 @@ class DataService {
         element.categorys
             .removeWhere((element) => element.subcategorys.isEmpty);
       }
-
+      var box = Hive.box<AudioData>('takwinData');
+      for (var element in box.values) {
+        box.delete(element.key);
+      }
       for (MainCategory mainCategory in data) {
         final String mainCategoryTitle = mainCategory.title;
         for (Category category in mainCategory.categorys) {
@@ -75,8 +78,7 @@ class DataService {
                   lessonTitle: lessonTitle,
                   onlineUrl: audioFiles.onlineUrl,
                 );
-                await Hive.box<AudioData>('takwinData')
-                    .put(audioFile.onlineUrl, audioFile);
+                await box.put(audioFile.onlineUrl, audioFile);
               }
             }
           }
