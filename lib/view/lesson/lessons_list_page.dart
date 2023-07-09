@@ -92,13 +92,13 @@ class _LessonHomePageState extends State<LessonHomePage> {
                                         color: Colors.white),
                                   ),
                                   const SizedBox(width: 10),
-                                  Expanded(
+                                  const Expanded(
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: const [
+                                      children: [
                                         Text("لا تتوفر دروس حاليا"),
                                       ],
                                     ),

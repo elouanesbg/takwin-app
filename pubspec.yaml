@@ -24,7 +24,6 @@ dependencies:
   internet_connection_checker: ^1.0.0+1
   uuid: ^3.0.7
   permission_handler: ^10.2.0
-  flutter_downloader: ^1.10.2
   get: ^4.6.5
   android_path_provider: ^0.3.0
   device_info_plus: ^8.2.0

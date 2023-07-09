@@ -6,7 +6,6 @@ import 'package:takwin/app.dart';
 import 'package:takwin/model/audio_data_model.dart';
 import 'package:takwin/model/audio_metadata_model.dart';
 import 'package:takwin/service/data_service.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,13 +14,6 @@ void main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-
-  await FlutterDownloader.initialize(
-      debug:
-          false, // optional: set to false to disable printing logs to console (default: true)
-      ignoreSsl:
-          true // option: set to false to disable working with http links (default: false)
-      );
 
   runApp(const MyApp());
 }
